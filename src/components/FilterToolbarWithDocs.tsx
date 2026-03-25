@@ -168,7 +168,7 @@ export const FilterToolbarWithDocs = ({
             },
           }}
         >
-          Documents{excludedDocsCount > 0 ? ` (${excludedDocsCount} hidden)` : ''}
+          Documents{excludedDocsCount > 0 ? ` · ${excludedDocsCount}` : ''}
         </Button>
 
         {/* Filter Dropdowns with specific icons */}

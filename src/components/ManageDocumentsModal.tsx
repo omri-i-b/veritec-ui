@@ -309,7 +309,7 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             gap: 2,
             px: 3,
             py: 1.5,

@@ -1,15 +1,26 @@
 import { Box, Tabs, Tab, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { CaseHeader } from '../components/CaseHeader';
 import { FilterToolbar } from '../components/FilterToolbar';
 import { EventsTable } from '../components/EventsTable';
+import { Pagination } from '../components/Pagination';
 import { colors } from '../theme/theme';
 
-// Main tabs
-const mainTabs = ['Overview', 'Events', 'Documents', 'Billing', 'DocIntel'];
+// Main tabs with completion status
+const mainTabs = [
+  { label: 'Overview', completed: true },
+  { label: 'Events', completed: true },
+  { label: 'Documents', completed: true },
+  { label: 'Drafting', completed: false },
+  { label: 'Report', completed: false },
+  { label: 'Indexing', completed: false },
+  { label: 'Billing', completed: false },
+  { label: 'Case Settings', completed: false },
+];
 
 // Sub-tabs for Events
 const eventSubTabs = [
@@ -21,6 +32,9 @@ const eventSubTabs = [
 export const EventsPage = () => {
   const [mainTab, setMainTab] = useState(1); // Events tab active
   const [eventTab, setEventTab] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const totalPages = 12; // Mock total pages
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
@@ -60,6 +74,7 @@ export const EventsPage = () => {
                   fontSize: 14,
                   fontWeight: 500,
                   color: colors.grey[600],
+                  minHeight: 48,
                   '&.Mui-selected': {
                     color: colors.blue[500],
                   },
@@ -69,8 +84,23 @@ export const EventsPage = () => {
                 },
               }}
             >
-              {mainTabs.map((tab) => (
-                <Tab key={tab} label={tab} />
+              {mainTabs.map((tab, index) => (
+                <Tab
+                  key={tab.label}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      {tab.completed && (
+                        <CheckCircleIcon
+                          sx={{
+                            fontSize: 16,
+                            color: index === mainTab ? colors.blue[500] : colors.green[500],
+                          }}
+                        />
+                      )}
+                      {tab.label}
+                    </Box>
+                  }
+                />
               ))}
             </Tabs>
           </Box>
@@ -131,7 +161,22 @@ export const EventsPage = () => {
           </Box>
 
           {/* Events Table */}
-          <EventsTable />
+          <Box
+            sx={{
+              border: `1px solid ${colors.grey[200]}`,
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <EventsTable />
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              rowsPerPage={rowsPerPage}
+              onPageChange={setCurrentPage}
+              onRowsPerPageChange={setRowsPerPage}
+            />
+          </Box>
         </Box>
       </Box>
     </Box>

@@ -1,6 +1,8 @@
-import { Box, Typography, Chip, TextField, InputAdornment, IconButton } from '@mui/material';
+import { Box, Typography, Chip, TextField, InputAdornment, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import ShareIcon from '@mui/icons-material/Share';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { colors } from '../theme/theme';
 
 interface CaseHeaderProps {
@@ -53,8 +55,45 @@ export const CaseHeader = ({ caseId, status }: CaseHeaderProps) => {
         />
       </Box>
 
-      {/* Right: Search and Settings */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {/* Right: Actions, Search and Settings */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        {/* Share Case Button */}
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<ShareIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            borderColor: colors.grey[300],
+            color: colors.grey[700],
+            fontSize: 13,
+            fontWeight: 500,
+            '&:hover': {
+              borderColor: colors.grey[400],
+              backgroundColor: colors.grey[50],
+            },
+          }}
+        >
+          Share Case
+        </Button>
+
+        {/* Search with AI Button */}
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<AutoAwesomeIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            backgroundColor: colors.blue[500],
+            color: '#FFFFFF',
+            fontSize: 13,
+            fontWeight: 500,
+            '&:hover': {
+              backgroundColor: colors.blue[600],
+            },
+          }}
+        >
+          Search with AI
+        </Button>
+
         <TextField
           placeholder="Search for documents"
           size="small"

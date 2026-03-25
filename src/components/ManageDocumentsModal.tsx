@@ -38,6 +38,13 @@ const mockDocuments: Document[] = [
   { id: '4', name: '20 St. Luke\'s Hospital 9.12.24-9.13.24.pdf', date: '3/25/2026', selected: true },
   { id: '5', name: "05-03-23-Docs Produced with Plaintiff's 3rd ...", date: '3/25/2026', selected: false },
   { id: '6', name: 'Medical_Records_2024.pdf', date: '3/24/2026', selected: true },
+  { id: '7', name: 'Lab_Results_Q1.pdf', date: '3/23/2026', selected: true },
+  { id: '8', name: 'Imaging_Report_MRI.pdf', date: '3/22/2026', selected: true },
+  { id: '9', name: 'Consultation_Notes.pdf', date: '3/21/2026', selected: false },
+  { id: '10', name: 'Discharge_Summary.pdf', date: '3/20/2026', selected: true },
+  { id: '11', name: 'Insurance_Claim_Form.pdf', date: '3/19/2026', selected: true },
+  { id: '12', name: 'Prescription_Records.pdf', date: '3/18/2026', selected: true },
+  { id: '13', name: 'Physical_Therapy_Notes.pdf', date: '3/17/2026', selected: true },
 ];
 
 interface ManageDocumentsModalProps {
@@ -85,8 +92,13 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
     onClose();
   };
 
-  const startIndex = (currentPage - 1) * rowsPerPage + 1;
+  const startIndex = filteredDocuments.length === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
   const endIndex = Math.min(currentPage * rowsPerPage, filteredDocuments.length);
+
+  // Reset to page 1 if current page is out of bounds after filtering
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(1);
+  }
 
   return (
     <Modal open={open} onClose={onClose}>

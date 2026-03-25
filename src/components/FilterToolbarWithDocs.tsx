@@ -8,7 +8,6 @@ import {
   InputAdornment,
   Typography,
   SvgIcon,
-  Badge,
 } from '@mui/material';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
@@ -143,41 +142,34 @@ export const FilterToolbarWithDocs = ({
           onClick={() => setHideDuplicates(!hideDuplicates)}
         />
 
-        {/* Documents Filter - NEW */}
-        <Badge
-          badgeContent={excludedDocsCount}
-          color="error"
-          invisible={excludedDocsCount === 0}
+        {/* Documents Filter - Shows activated state when docs excluded */}
+        <Button
+          variant={excludedDocsCount > 0 ? 'contained' : 'outlined'}
+          startIcon={
+            <DescriptionOutlinedIcon
+              sx={{ fontSize: 20, color: excludedDocsCount > 0 ? '#fff' : 'rgba(0, 0, 0, 0.6)' }}
+            />
+          }
+          onClick={onManageDocuments}
           sx={{
-            '& .MuiBadge-badge': {
-              fontSize: 11,
-              height: 18,
-              minWidth: 18,
+            borderColor: 'rgba(0, 0, 0, 0.23)',
+            backgroundColor: excludedDocsCount > 0 ? colors.blue[500] : 'transparent',
+            color: excludedDocsCount > 0 ? '#fff' : 'rgba(0, 0, 0, 0.6)',
+            fontSize: 14,
+            fontWeight: excludedDocsCount > 0 ? 500 : 400,
+            height: 36,
+            textTransform: 'none',
+            px: 1.5,
+            whiteSpace: 'nowrap',
+            boxShadow: excludedDocsCount > 0 ? 'none' : undefined,
+            '&:hover': {
+              borderColor: excludedDocsCount > 0 ? colors.blue[600] : 'rgba(0, 0, 0, 0.4)',
+              backgroundColor: excludedDocsCount > 0 ? colors.blue[600] : 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >
-          <Button
-            variant="outlined"
-            startIcon={<DescriptionOutlinedIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
-            onClick={onManageDocuments}
-            sx={{
-              borderColor: excludedDocsCount > 0 ? colors.red[300] : 'rgba(0, 0, 0, 0.23)',
-              color: excludedDocsCount > 0 ? colors.red[500] : 'rgba(0, 0, 0, 0.6)',
-              fontSize: 14,
-              fontWeight: 400,
-              height: 36,
-              textTransform: 'none',
-              px: 1.5,
-              whiteSpace: 'nowrap',
-              '&:hover': {
-                borderColor: excludedDocsCount > 0 ? colors.red[500] : 'rgba(0, 0, 0, 0.4)',
-                backgroundColor: excludedDocsCount > 0 ? 'rgba(244, 67, 54, 0.04)' : 'rgba(0, 0, 0, 0.04)',
-              },
-            }}
-          >
-            Documents
-          </Button>
-        </Badge>
+          Documents{excludedDocsCount > 0 ? ` (${excludedDocsCount} hidden)` : ''}
+        </Button>
 
         {/* Filter Dropdowns with specific icons */}
         <FilterDropdownButton

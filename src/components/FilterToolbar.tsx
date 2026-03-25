@@ -1,8 +1,11 @@
 import { Box, Button, Menu, MenuItem, Chip, TextField, InputAdornment, Typography, SvgIcon } from '@mui/material';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
-import AddIcon from '@mui/icons-material/Add';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ListIcon from '@mui/icons-material/List';
+import EventIcon from '@mui/icons-material/Event';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -59,11 +62,11 @@ const ToggleFilterButton = ({
   </Button>
 );
 
-// Filter dropdown button with + icon
-const FilterDropdownButton = ({ label }: { label: string }) => (
+// Filter dropdown button with custom icon
+const FilterDropdownButton = ({ label, icon }: { label: string; icon: React.ReactNode }) => (
   <Button
     variant="outlined"
-    startIcon={<AddIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+    startIcon={icon}
     sx={{
       borderColor: 'rgba(0, 0, 0, 0.23)',
       color: 'rgba(0, 0, 0, 0.6)',
@@ -92,14 +95,14 @@ export const FilterToolbar = () => {
     <Box
       sx={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
         py: 1.5,
         gap: 2,
       }}
     >
-      {/* Left side: Event Overview label */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {/* Left side: Event Overview label - aligned with buttons */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: 36 }}>
         <EventOverviewIcon />
         <Typography sx={{ fontSize: 16, fontWeight: 400, color: 'rgba(0, 0, 0, 0.87)' }}>
           Event Overview
@@ -120,11 +123,23 @@ export const FilterToolbar = () => {
           onClick={() => setHideDuplicates(!hideDuplicates)}
         />
 
-        {/* Filter Dropdowns */}
-        <FilterDropdownButton label="Facility Providers" />
-        <FilterDropdownButton label="Medical Providers" />
-        <FilterDropdownButton label="Parties" />
-        <FilterDropdownButton label="Event Types" />
+        {/* Filter Dropdowns with specific icons */}
+        <FilterDropdownButton
+          label="Facility Providers"
+          icon={<ApartmentIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+        />
+        <FilterDropdownButton
+          label="Medical Providers"
+          icon={<MedicalServicesOutlinedIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+        />
+        <FilterDropdownButton
+          label="Parties"
+          icon={<PersonOutlineIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+        />
+        <FilterDropdownButton
+          label="Event Types"
+          icon={<ListIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+        />
 
         {/* Start Date */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -148,7 +163,7 @@ export const FilterToolbar = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <CalendarTodayIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
+                  <EventIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
                 </InputAdornment>
               ),
             }}
@@ -179,7 +194,7 @@ export const FilterToolbar = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <CalendarTodayIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
+                  <EventIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
                 </InputAdornment>
               ),
             }}
@@ -187,33 +202,35 @@ export const FilterToolbar = () => {
         </Box>
 
         {/* Search */}
-        <TextField
-          placeholder="Search"
-          size="small"
-          sx={{
-            width: 160,
-            '& .MuiOutlinedInput-root': {
-              height: 36,
-              fontSize: 14,
-              '& fieldset': {
-                borderColor: 'rgba(0, 0, 0, 0.23)',
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <TextField
+            placeholder="Search"
+            size="small"
+            sx={{
+              width: 160,
+              '& .MuiOutlinedInput-root': {
+                height: 36,
+                fontSize: 14,
+                '& fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.4)',
+                },
               },
-              '&:hover fieldset': {
-                borderColor: 'rgba(0, 0, 0, 0.4)',
+              '& .MuiInputBase-input::placeholder': {
+                opacity: 0.42,
               },
-            },
-            '& .MuiInputBase-input::placeholder': {
-              opacity: 0.42,
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
-              </InputAdornment>
-            ),
-          }}
-        />
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
 
         {/* View Dropdown */}
         <Button

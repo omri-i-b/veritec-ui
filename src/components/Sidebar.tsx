@@ -56,7 +56,7 @@ export const Sidebar = () => {
 
       {/* Main Navigation */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, flex: 1 }}>
-        <NavItem src={`${import.meta.env.BASE_URL}icons/fileflow.jpg`} label="FileFlow" />
+        <NavItem src={`${import.meta.env.BASE_URL}icons/fileflow.png`} label="FileFlow" />
         <NavItem src={`${import.meta.env.BASE_URL}icons/lithub.jpg`} label="LitHub" />
       </Box>
 

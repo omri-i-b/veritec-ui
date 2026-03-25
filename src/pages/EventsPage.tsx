@@ -58,18 +58,18 @@ export const EventsPage = () => {
           <CaseHeader caseId="TEST CASE-20260325102623-RUN1" />
 
           {/* Main Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: colors.grey[200], mb: 1 }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'rgba(0, 0, 0, 0.12)', mb: 1 }}>
             <Tabs
               value={mainTab}
               onChange={(_, newValue) => setMainTab(newValue)}
               sx={{
-                minHeight: 40,
+                minHeight: 48,
                 '& .MuiTab-root': {
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 500,
-                  color: colors.grey[600],
-                  minHeight: 40,
-                  padding: '8px 16px',
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  minHeight: 48,
+                  padding: '12px 16px',
                   textTransform: 'none',
                   '&.Mui-selected': {
                     color: colors.blue[500],
@@ -77,6 +77,7 @@ export const EventsPage = () => {
                 },
                 '& .MuiTabs-indicator': {
                   backgroundColor: colors.blue[500],
+                  height: 2,
                 },
               }}
             >
@@ -84,13 +85,13 @@ export const EventsPage = () => {
                 <Tab
                   key={tab.label}
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                       {tab.label}
                       {tab.completed && (
                         <CheckCircleIcon
                           sx={{
-                            fontSize: 14,
-                            color: colors.green[500],
+                            fontSize: 20,
+                            color: '#4CAF50', // Green from Figma
                           }}
                         />
                       )}

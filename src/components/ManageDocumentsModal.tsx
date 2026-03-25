@@ -13,13 +13,9 @@ import {
   Checkbox,
   TextField,
   InputAdornment,
-  Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -36,19 +32,12 @@ interface Document {
 }
 
 const mockDocuments: Document[] = [
-  { id: '1', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '2', name: 'at_2023.pdf', date: '17/12/2023', selected: true },
-  { id: '3', name: 'alicet_24.pdf', date: '17/12/2023', selected: true },
-  { id: '4', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '5', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '6', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '7', name: 'at_2023.pdf', date: '17/12/2023', selected: true },
-  { id: '8', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '9', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '10', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '11', name: 'at_23.pdf', date: '17/12/2023', selected: true },
-  { id: '12', name: 'at_2023.pdf', date: '17/12/2023', selected: true },
-  { id: '13', name: 'at_23.pdf', date: '17/12/2023', selected: true },
+  { id: '1', name: 'C Short.pdf', date: '3/25/2026', selected: true },
+  { id: '2', name: "1475_7_Plf Cobb's Initial Disclosures.pdf", date: '3/25/2026', selected: true },
+  { id: '3', name: '904.pdf', date: '3/25/2026', selected: true },
+  { id: '4', name: '20 St. Luke\'s Hospital 9.12.24-9.13.24.pdf', date: '3/25/2026', selected: true },
+  { id: '5', name: "05-03-23-Docs Produced with Plaintiff's 3rd ...", date: '3/25/2026', selected: false },
+  { id: '6', name: 'Medical_Records_2024.pdf', date: '3/24/2026', selected: true },
 ];
 
 interface ManageDocumentsModalProps {
@@ -73,9 +62,8 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
     currentPage * rowsPerPage
   );
 
-  const selectedCount = documents.filter((d) => d.selected).length;
-  const allSelected = selectedCount === documents.length;
-  const someSelected = selectedCount > 0 && selectedCount < documents.length;
+  const allSelected = paginatedDocuments.every((d) => d.selected);
+  const someSelected = paginatedDocuments.some((d) => d.selected) && !allSelected;
 
   const handleToggleSelect = (id: string) => {
     setDocuments((prev) =>
@@ -85,7 +73,10 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
 
   const handleToggleSelectAll = () => {
     const newSelected = !allSelected;
-    setDocuments((prev) => prev.map((doc) => ({ ...doc, selected: newSelected })));
+    const pageIds = paginatedDocuments.map((d) => d.id);
+    setDocuments((prev) =>
+      prev.map((doc) => (pageIds.includes(doc.id) ? { ...doc, selected: newSelected } : doc))
+    );
   };
 
   const handleSave = () => {
@@ -105,24 +96,23 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 720,
+          width: 640,
           bgcolor: 'white',
-          borderRadius: '4px',
-          boxShadow: '0px 2px 8px -2px rgba(21,21,21,0.08), 0px 20px 24px -4px rgba(21,21,21,0.08)',
+          borderRadius: 2,
+          boxShadow: '0px 4px 24px rgba(0, 0, 0, 0.12)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
         {/* Header */}
-        <Box sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1 }}>
+        <Box sx={{ px: 3, pt: 3, pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <Typography
               sx={{
                 fontSize: 18,
-                fontWeight: 400,
-                lineHeight: 1.334,
-                color: '#171a1c',
+                fontWeight: 500,
+                color: 'rgba(0,0,0,0.87)',
               }}
             >
               Manage Documents
@@ -134,81 +124,55 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
 
           <Typography
             sx={{
-              fontSize: 13,
-              fontWeight: 400,
-              lineHeight: 1.5,
+              fontSize: 14,
               color: 'rgba(0,0,0,0.6)',
-              letterSpacing: '0.15px',
-              mb: 1.5,
+              mt: 0.5,
             }}
           >
-            Select the documents you want to use in chat
+            Choose the documents to include in this view
+          </Typography>
+        </Box>
+
+        {/* Select Documents Section */}
+        <Box sx={{ px: 3, pt: 2, pb: 1.5 }}>
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: 'rgba(0,0,0,0.87)',
+              mb: 1,
+            }}
+          >
+            Select Documents from Case
           </Typography>
 
-          {/* Toolbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 32 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-              <ListAltOutlinedIcon sx={{ fontSize: 20, color: 'rgba(0,0,0,0.54)' }} />
-              <Typography
-                sx={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: 'rgba(0,0,0,0.87)',
-                }}
-              >
-                All Documents
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<FilterAltOutlinedIcon sx={{ fontSize: 18 }} />}
-                sx={{
-                  borderColor: '#bebebe',
-                  color: 'rgba(0,0,0,0.6)',
-                  textTransform: 'none',
-                  height: 32,
-                  fontSize: 13,
-                  fontWeight: 400,
-                  px: 1.5,
-                  minWidth: 'auto',
-                  '&:hover': {
-                    borderColor: '#9e9e9e',
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                  },
-                }}
-              >
-                Filters
-              </Button>
-              <TextField
-                placeholder="Search..."
-                size="small"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{
-                  width: 160,
-                  '& .MuiOutlinedInput-root': {
-                    height: 32,
-                    fontSize: 13,
-                    '& fieldset': {
-                      borderColor: '#bebebe',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#9e9e9e',
-                    },
-                  },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 18, color: 'rgba(0,0,0,0.54)' }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-          </Box>
+          {/* Search Field */}
+          <TextField
+            fullWidth
+            placeholder="Search documents..."
+            size="small"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                height: 40,
+                fontSize: 14,
+                '& fieldset': {
+                  borderColor: 'rgba(0,0,0,0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0,0,0,0.4)',
+                },
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 20, color: 'rgba(0,0,0,0.54)' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
         </Box>
 
         {/* Table */}
@@ -216,77 +180,100 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox" sx={{ py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                <TableCell
+                  padding="checkbox"
+                  sx={{ borderBottom: '1px solid rgba(0,0,0,0.12)', width: 48 }}
+                >
                   <Checkbox
                     checked={allSelected}
                     indeterminate={someSelected}
                     onChange={handleToggleSelectAll}
                     size="small"
                     sx={{
-                      p: 0,
                       color: 'rgba(0,0,0,0.6)',
                       '&.Mui-checked': { color: colors.blue[500] },
                       '&.MuiCheckbox-indeterminate': { color: colors.blue[500] },
                     }}
                   />
                 </TableCell>
-                <TableCell sx={{ fontWeight: 500, fontSize: 12, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                  Document name
+                <TableCell
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: 13,
+                    color: 'rgba(0,0,0,0.87)',
+                    borderBottom: '1px solid rgba(0,0,0,0.12)',
+                  }}
+                >
+                  Document Name
                 </TableCell>
-                <TableCell sx={{ fontWeight: 500, fontSize: 12, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                  Upload date
+                <TableCell
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: 13,
+                    color: 'rgba(0,0,0,0.87)',
+                    borderBottom: '1px solid rgba(0,0,0,0.12)',
+                    width: 100,
+                  }}
+                >
+                  Date
                 </TableCell>
-                <TableCell sx={{ width: 40, py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }} />
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: 13,
+                    color: 'rgba(0,0,0,0.87)',
+                    borderBottom: '1px solid rgba(0,0,0,0.12)',
+                    width: 60,
+                  }}
+                >
+                  View
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedDocuments.map((doc) => (
                 <TableRow
                   key={doc.id}
+                  hover
                   sx={{
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
+                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
                   }}
                 >
-                  <TableCell padding="checkbox" sx={{ py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                  <TableCell
+                    padding="checkbox"
+                    sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}
+                  >
                     <Checkbox
                       checked={doc.selected}
                       onChange={() => handleToggleSelect(doc.id)}
                       size="small"
                       sx={{
-                        p: 0,
                         color: 'rgba(0,0,0,0.6)',
                         '&.Mui-checked': { color: colors.blue[500] },
                       }}
                     />
                   </TableCell>
-                  <TableCell sx={{ py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                      <InsertDriveFileOutlinedIcon
-                        sx={{ fontSize: 18, color: 'rgba(0,0,0,0.54)' }}
-                      />
-                      <Link
-                        href="#"
-                        underline="hover"
-                        sx={{
-                          fontSize: 13,
-                          color: colors.blue[500],
-                        }}
-                      >
-                        {doc.name}
-                      </Link>
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                  <TableCell sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
                     <Typography
                       sx={{
-                        fontSize: 12,
+                        fontSize: 13,
                         color: 'rgba(0,0,0,0.87)',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: 320,
                       }}
                     >
+                      {doc.name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+                    <Typography sx={{ fontSize: 13, color: 'rgba(0,0,0,0.87)' }}>
                       {doc.date}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ width: 40, py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                  <TableCell align="center" sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
                     <IconButton
                       size="small"
                       onClick={() => handleToggleSelect(doc.id)}
@@ -310,25 +297,24 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             gap: 2,
             px: 3,
-            py: 0.75,
-            backgroundColor: '#f5f5f5',
+            py: 1.5,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography sx={{ fontSize: 11, color: 'rgba(0,0,0,0.6)' }}>
+            <Typography sx={{ fontSize: 13, color: 'rgba(0,0,0,0.6)' }}>
               Rows per page:
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <Typography sx={{ fontSize: 11, color: 'rgba(0,0,0,0.87)' }}>
+              <Typography sx={{ fontSize: 13, color: 'rgba(0,0,0,0.87)' }}>
                 {rowsPerPage}
               </Typography>
-              <KeyboardArrowDownIcon sx={{ fontSize: 18, color: 'rgba(0,0,0,0.54)' }} />
+              <KeyboardArrowDownIcon sx={{ fontSize: 18, color: 'rgba(0,0,0,0.54)', ml: -0.25 }} />
             </Box>
           </Box>
-          <Typography sx={{ fontSize: 11, color: 'rgba(0,0,0,0.87)' }}>
+          <Typography sx={{ fontSize: 13, color: 'rgba(0,0,0,0.6)' }}>
             {startIndex}-{endIndex} of {filteredDocuments.length}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -336,43 +322,42 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               size="small"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
-              sx={{ p: 0.5 }}
+              sx={{ p: 0.25 }}
             >
-              <ChevronLeftIcon sx={{ fontSize: 18 }} />
+              <ChevronLeftIcon sx={{ fontSize: 20 }} />
             </IconButton>
             <IconButton
               size="small"
               disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage((p) => p + 1)}
-              sx={{ p: 0.5 }}
+              sx={{ p: 0.25 }}
             >
-              <ChevronRightIcon sx={{ fontSize: 18 }} />
+              <ChevronRightIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Box>
         </Box>
 
-        {/* Bottom Buttons */}
+        {/* Footer Buttons */}
         <Box
           sx={{
             display: 'flex',
+            justifyContent: 'flex-end',
             gap: 1.5,
             px: 3,
             py: 2,
+            borderTop: '1px solid rgba(0,0,0,0.08)',
           }}
         >
           <Button
-            variant="outlined"
-            fullWidth
+            variant="text"
             onClick={onClose}
             sx={{
               textTransform: 'none',
-              borderColor: colors.blue[500],
               color: colors.blue[500],
               fontSize: 14,
               fontWeight: 500,
-              height: 36,
+              px: 2,
               '&:hover': {
-                borderColor: colors.blue[600],
                 backgroundColor: 'rgba(33, 150, 243, 0.04)',
               },
             }}
@@ -381,7 +366,6 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           </Button>
           <Button
             variant="contained"
-            fullWidth
             onClick={handleSave}
             sx={{
               textTransform: 'none',
@@ -389,9 +373,11 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               fontSize: 14,
               fontWeight: 500,
               height: 36,
-              boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
+              px: 3,
+              boxShadow: 'none',
               '&:hover': {
                 backgroundColor: colors.blue[600],
+                boxShadow: 'none',
               },
             }}
           >

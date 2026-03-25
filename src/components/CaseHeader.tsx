@@ -1,0 +1,96 @@
+import { Box, Typography, Chip, TextField, InputAdornment, IconButton } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import { colors } from '../theme/theme';
+
+interface CaseHeaderProps {
+  caseId: string;
+  status: 'Processed' | 'Processing' | 'New' | 'Error';
+}
+
+const statusColors = {
+  Processed: { bg: colors.green[500], text: '#FFFFFF' },
+  Processing: { bg: colors.blue[500], text: '#FFFFFF' },
+  New: { bg: colors.grey[500], text: '#FFFFFF' },
+  Error: { bg: colors.red[500], text: '#FFFFFF' },
+};
+
+export const CaseHeader = ({ caseId, status }: CaseHeaderProps) => {
+  const statusColor = statusColors[status];
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        mb: 2,
+      }}
+    >
+      {/* Left: Case ID and Status */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography
+          variant="h2"
+          sx={{
+            fontSize: 24,
+            fontWeight: 600,
+            color: colors.grey[900],
+          }}
+        >
+          Case - {caseId}
+        </Typography>
+
+        <Chip
+          label={status}
+          size="small"
+          sx={{
+            backgroundColor: statusColor.bg,
+            color: statusColor.text,
+            fontWeight: 500,
+            fontSize: 12,
+            height: 24,
+          }}
+        />
+      </Box>
+
+      {/* Right: Search and Settings */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <TextField
+          placeholder="Search for documents"
+          size="small"
+          sx={{
+            width: 280,
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: colors.grey[50],
+              borderRadius: 2,
+              '& fieldset': {
+                borderColor: colors.grey[200],
+              },
+              '&:hover fieldset': {
+                borderColor: colors.grey[300],
+              },
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: colors.grey[400], fontSize: 20 }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <IconButton
+          sx={{
+            color: colors.grey[500],
+            '&:hover': {
+              backgroundColor: colors.grey[100],
+            },
+          }}
+        >
+          <SettingsRoundedIcon />
+        </IconButton>
+      </Box>
+    </Box>
+  );
+};

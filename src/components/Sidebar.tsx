@@ -48,7 +48,7 @@ export const Sidebar = () => {
       <Box sx={{ mb: 2 }}>
         <Box
           component="img"
-          src="/icons/veritec_logo.jpg"
+          src={`${import.meta.env.BASE_URL}icons/veritec_logo.jpg`}
           alt="Veritec"
           sx={{ width: 40, height: 40, borderRadius: 2 }}
         />
@@ -56,14 +56,14 @@ export const Sidebar = () => {
 
       {/* Main Navigation */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, flex: 1 }}>
-        <NavItem src="/icons/fileflow.jpg" label="Cases" />
-        <NavItem src="/icons/lithub.jpg" label="Events" />
+        <NavItem src={`${import.meta.env.BASE_URL}icons/fileflow.jpg`} label="Cases" />
+        <NavItem src={`${import.meta.env.BASE_URL}icons/lithub.jpg`} label="Events" />
       </Box>
 
       {/* Bottom Navigation */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, mt: 'auto' }}>
         {/* Help Button */}
-        <NavItem src="/icons/help.jpg" label="Help" />
+        <NavItem src={`${import.meta.env.BASE_URL}icons/help.jpg`} label="Help" />
 
         {/* User Avatar */}
         <Avatar

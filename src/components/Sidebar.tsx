@@ -48,15 +48,15 @@ export const Sidebar = () => {
       <Box sx={{ mb: 2 }}>
         <Box
           component="img"
-          src={`${import.meta.env.BASE_URL}icons/veritec_logo.jpg`}
+          src={`${import.meta.env.BASE_URL}icons/logo.png`}
           alt="Veritec"
-          sx={{ width: 40, height: 40, borderRadius: 2 }}
+          sx={{ width: 40, height: 40 }}
         />
       </Box>
 
       {/* Main Navigation */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, flex: 1 }}>
-        <NavItem src={`${import.meta.env.BASE_URL}icons/fileflow.png`} label="FileFlow" />
+        <NavItem src={`${import.meta.env.BASE_URL}icons/fileflow.png`} label="FileFlow" size={20} />
         <NavItem src={`${import.meta.env.BASE_URL}icons/lithub.jpg`} label="LitHub" />
       </Box>
 

@@ -1,28 +1,71 @@
-import { Box, Button, Switch, FormControlLabel, Menu, MenuItem, Chip, TextField, InputAdornment, Typography } from '@mui/material';
-import TableRowsRoundedIcon from '@mui/icons-material/TableRowsRounded';
-import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Box, Button, Menu, MenuItem, Chip, TextField, InputAdornment, Typography } from '@mui/material';
+import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import AddIcon from '@mui/icons-material/Add';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import TableRowsIcon from '@mui/icons-material/TableRows';
 import { useState } from 'react';
 import { colors } from '../theme/theme';
 
-const FilterButton = ({ label, hasIcon = true }: { label: string; hasIcon?: boolean }) => (
+// Toggle button component for filters with switch icon
+const ToggleFilterButton = ({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) => (
   <Button
     variant="outlined"
-    size="small"
-    startIcon={hasIcon ? <AddIcon sx={{ fontSize: 16 }} /> : undefined}
+    startIcon={
+      active ? (
+        <ToggleOnIcon sx={{ color: colors.blue[500] }} />
+      ) : (
+        <ToggleOffOutlinedIcon sx={{ color: 'rgba(0, 0, 0, 0.38)' }} />
+      )
+    }
+    onClick={onClick}
     sx={{
       borderColor: colors.grey[300],
-      color: colors.grey[700],
-      fontSize: 12,
-      fontWeight: 500,
-      height: 32,
+      color: 'rgba(0, 0, 0, 0.6)',
+      fontSize: 14,
+      fontWeight: 400,
+      height: 36,
       textTransform: 'none',
+      px: 1.5,
+      whiteSpace: 'nowrap',
       '&:hover': {
         borderColor: colors.grey[400],
-        backgroundColor: colors.grey[50],
+        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+      },
+    }}
+  >
+    {label}
+  </Button>
+);
+
+// Filter dropdown button with + icon
+const FilterDropdownButton = ({ label }: { label: string }) => (
+  <Button
+    variant="outlined"
+    startIcon={<AddIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+    sx={{
+      borderColor: 'rgba(0, 0, 0, 0.23)',
+      color: 'rgba(0, 0, 0, 0.6)',
+      fontSize: 14,
+      fontWeight: 400,
+      height: 36,
+      textTransform: 'none',
+      px: 1.5,
+      whiteSpace: 'nowrap',
+      '&:hover': {
+        borderColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: 'rgba(0, 0, 0, 0.04)',
       },
     }}
   >
@@ -42,127 +85,91 @@ export const FilterToolbar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         py: 1.5,
-        borderBottom: `1px solid ${colors.grey[200]}`,
         gap: 2,
       }}
     >
-      {/* Left side: Title and filters */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-        {/* Event Overview label */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <TableRowsRoundedIcon sx={{ color: colors.grey[500], fontSize: 18 }} />
-          <Typography sx={{ fontSize: 13, fontWeight: 500, color: colors.grey[900] }}>
-            Event Overview
-          </Typography>
-        </Box>
-
-        {/* Show Only Relevant Toggle */}
-        <FormControlLabel
-          control={
-            <Switch
-              size="small"
-              checked={showRelevant}
-              onChange={(e) => setShowRelevant(e.target.checked)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: colors.blue[500],
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: colors.blue[500],
-                },
-              }}
-            />
-          }
-          label={
-            <Typography sx={{ fontSize: 12, color: colors.grey[700] }}>
-              Show only relevant events
-            </Typography>
-          }
-          sx={{ ml: 1, mr: 0 }}
-        />
-
-        {/* Hide Duplicates Toggle */}
-        <FormControlLabel
-          control={
-            <Switch
-              size="small"
-              checked={hideDuplicates}
-              onChange={(e) => setHideDuplicates(e.target.checked)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: colors.blue[500],
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: colors.blue[500],
-                },
-              }}
-            />
-          }
-          label={
-            <Typography sx={{ fontSize: 12, color: colors.grey[700] }}>
-              Hide duplicates
-            </Typography>
-          }
-          sx={{ ml: 0, mr: 0 }}
-        />
-
-        {/* Filter Buttons */}
-        <FilterButton label="Facility Providers" />
-        <FilterButton label="Medical Providers" />
-        <FilterButton label="Parties" />
-        <FilterButton label="Event Types" />
+      {/* Left side: Event Overview label */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <TableRowsIcon sx={{ color: 'rgba(0, 0, 0, 0.87)', fontSize: 24 }} />
+        <Typography sx={{ fontSize: 16, fontWeight: 400, color: 'rgba(0, 0, 0, 0.87)' }}>
+          Event Overview
+        </Typography>
       </Box>
 
-      {/* Right side: Date pickers, search, view, export */}
+      {/* Right side: All filters */}
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1.5 }}>
+        {/* Toggle Filters */}
+        <ToggleFilterButton
+          label="Show only relevant events"
+          active={showRelevant}
+          onClick={() => setShowRelevant(!showRelevant)}
+        />
+        <ToggleFilterButton
+          label="Hide duplicates"
+          active={hideDuplicates}
+          onClick={() => setHideDuplicates(!hideDuplicates)}
+        />
+
+        {/* Filter Dropdowns */}
+        <FilterDropdownButton label="Facility Providers" />
+        <FilterDropdownButton label="Medical Providers" />
+        <FilterDropdownButton label="Parties" />
+        <FilterDropdownButton label="Event Types" />
+
         {/* Start Date */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <Typography sx={{ fontSize: 11, color: colors.grey[500] }}>Start</Typography>
+          <Typography sx={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>Start</Typography>
           <TextField
             placeholder="MM/DD/YYYY"
             size="small"
             sx={{
-              width: 110,
+              width: 140,
               '& .MuiOutlinedInput-root': {
-                height: 32,
-                fontSize: 12,
+                height: 36,
+                fontSize: 14,
                 '& fieldset': {
-                  borderColor: colors.grey[300],
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.4)',
                 },
               },
             }}
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CalendarTodayIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
                 </InputAdornment>
               ),
             }}
           />
         </Box>
 
-        <Typography sx={{ fontSize: 12, color: colors.grey[400], mb: 0.8 }}>-</Typography>
+        <Typography sx={{ fontSize: 16, color: 'rgba(0, 0, 0, 0.6)', mb: 0.75 }}>–</Typography>
 
         {/* End Date */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <Typography sx={{ fontSize: 11, color: colors.grey[500] }}>End</Typography>
+          <Typography sx={{ fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>End</Typography>
           <TextField
             placeholder="MM/DD/YYYY"
             size="small"
             sx={{
-              width: 110,
+              width: 140,
               '& .MuiOutlinedInput-root': {
-                height: 32,
-                fontSize: 12,
+                height: 36,
+                fontSize: 14,
                 '& fieldset': {
-                  borderColor: colors.grey[300],
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.4)',
                 },
               },
             }}
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CalendarTodayIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
                 </InputAdornment>
               ),
             }}
@@ -174,19 +181,25 @@ export const FilterToolbar = () => {
           placeholder="Search"
           size="small"
           sx={{
-            width: 120,
+            width: 160,
             '& .MuiOutlinedInput-root': {
-              height: 32,
-              fontSize: 12,
+              height: 36,
+              fontSize: 14,
               '& fieldset': {
-                borderColor: colors.grey[300],
+                borderColor: 'rgba(0, 0, 0, 0.23)',
               },
+              '&:hover fieldset': {
+                borderColor: 'rgba(0, 0, 0, 0.4)',
+              },
+            },
+            '& .MuiInputBase-input::placeholder': {
+              opacity: 0.42,
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: 16, color: colors.grey[400] }} />
+                <SearchIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />
               </InputAdornment>
             ),
           }}
@@ -195,19 +208,20 @@ export const FilterToolbar = () => {
         {/* View Dropdown */}
         <Button
           variant="outlined"
-          size="small"
-          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          endIcon={<ExpandMoreIcon sx={{ fontSize: 20 }} />}
           onClick={(e) => setViewAnchor(e.currentTarget)}
           sx={{
-            borderColor: colors.grey[300],
-            color: colors.grey[700],
-            fontSize: 12,
-            fontWeight: 500,
-            height: 32,
+            borderColor: 'rgba(0, 0, 0, 0.23)',
+            color: 'rgba(0, 0, 0, 0.6)',
+            fontSize: 14,
+            fontWeight: 400,
+            height: 36,
             textTransform: 'none',
+            px: 1.5,
+            gap: 0.5,
             '&:hover': {
-              borderColor: colors.grey[400],
-              backgroundColor: colors.grey[50],
+              borderColor: 'rgba(0, 0, 0, 0.4)',
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >
@@ -216,11 +230,15 @@ export const FilterToolbar = () => {
             label="Default"
             size="small"
             sx={{
-              ml: 0.5,
-              height: 20,
-              fontSize: 11,
+              height: 24,
+              fontSize: 13,
+              fontWeight: 400,
               backgroundColor: colors.blue[500],
               color: '#FFFFFF',
+              borderRadius: '16px',
+              '& .MuiChip-label': {
+                px: 1,
+              },
             }}
           />
         </Button>
@@ -234,20 +252,22 @@ export const FilterToolbar = () => {
           <MenuItem onClick={() => setViewAnchor(null)}>Expanded</MenuItem>
         </Menu>
 
-        {/* Export Button */}
+        {/* Export Button - Outlined style */}
         <Button
-          variant="contained"
-          size="small"
-          startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 16 }} />}
-          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          variant="outlined"
+          startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 20 }} />}
+          endIcon={<ExpandMoreIcon sx={{ fontSize: 20 }} />}
           sx={{
-            backgroundColor: colors.blue[500],
-            fontSize: 12,
+            borderColor: 'rgba(33, 150, 243, 0.5)',
+            color: colors.blue[500],
+            fontSize: 14,
             fontWeight: 500,
-            height: 32,
+            height: 36,
             textTransform: 'none',
+            px: 1.5,
             '&:hover': {
-              backgroundColor: colors.blue[600],
+              borderColor: colors.blue[500],
+              backgroundColor: 'rgba(33, 150, 243, 0.04)',
             },
           }}
         >

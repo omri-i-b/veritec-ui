@@ -2,6 +2,7 @@ import { Box, Tabs, Tab } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { CaseHeader } from '../components/CaseHeader';
 import { FilterToolbar } from '../components/FilterToolbar';
 import { EventsTable } from '../components/EventsTable';
@@ -44,6 +45,15 @@ export const EventsPage = () => {
       >
         {/* Content Area */}
         <Box sx={{ px: 3, py: 2 }}>
+          {/* Breadcrumbs */}
+          <Breadcrumbs
+            items={[
+              { label: 'MedChron', href: '#' },
+              { label: 'All Cases', href: '#' },
+              { label: 'TEST CASE-20260325102623-RUN1' },
+            ]}
+          />
+
           {/* Case Header */}
           <CaseHeader caseId="TEST CASE-20260325102623-RUN1" />
 

@@ -1,6 +1,6 @@
 import { Box, Typography, IconButton, Button } from '@mui/material';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import ShareIcon from '@mui/icons-material/Share';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import IosShareIcon from '@mui/icons-material/IosShare';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { colors } from '../theme/theme';
 
@@ -15,74 +15,79 @@ export const CaseHeader = ({ caseId }: CaseHeaderProps) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        mb: 1,
+        mb: 0.5,
       }}
     >
       {/* Left: Case ID */}
       <Typography
         variant="h1"
         sx={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: colors.grey[900],
+          fontSize: 24,
+          fontWeight: 400,
+          color: 'rgba(0, 0, 0, 0.87)',
         }}
       >
         Case - {caseId}
       </Typography>
 
       {/* Right: Actions and Settings */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {/* Share Case Button */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        {/* Share Case Button - Outlined Blue */}
         <Button
           variant="outlined"
-          size="small"
-          startIcon={<ShareIcon sx={{ fontSize: 16 }} />}
+          startIcon={<IosShareIcon sx={{ fontSize: 20 }} />}
           sx={{
-            borderColor: colors.grey[300],
-            color: colors.grey[700],
-            fontSize: 12,
+            borderColor: 'rgba(33, 150, 243, 0.5)',
+            color: colors.blue[500],
+            fontSize: 14,
             fontWeight: 500,
-            height: 32,
+            height: 36,
             textTransform: 'none',
+            px: 2,
             '&:hover': {
-              borderColor: colors.grey[400],
-              backgroundColor: colors.grey[50],
+              borderColor: colors.blue[500],
+              backgroundColor: 'rgba(33, 150, 243, 0.04)',
             },
           }}
         >
           Share Case
         </Button>
 
-        {/* Search with AI Button */}
+        {/* Search with AI Button - Filled Blue */}
         <Button
           variant="contained"
-          size="small"
-          startIcon={<AutoAwesomeIcon sx={{ fontSize: 16 }} />}
+          startIcon={<AutoAwesomeIcon sx={{ fontSize: 20 }} />}
           sx={{
-            backgroundColor: colors.green[500],
+            backgroundColor: colors.blue[500],
             color: '#FFFFFF',
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 500,
-            height: 32,
+            height: 36,
             textTransform: 'none',
+            px: 2,
+            boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
             '&:hover': {
-              backgroundColor: colors.green[600],
+              backgroundColor: colors.blue[600],
             },
           }}
         >
           Search with AI
         </Button>
 
+        {/* Settings Icon Button */}
         <IconButton
-          size="small"
           sx={{
-            color: colors.grey[500],
+            border: '1px solid #D2D2D2',
+            borderRadius: 1,
+            width: 36,
+            height: 36,
+            color: 'rgba(0, 0, 0, 0.6)',
             '&:hover': {
-              backgroundColor: colors.grey[100],
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >
-          <SettingsRoundedIcon sx={{ fontSize: 20 }} />
+          <SettingsOutlinedIcon sx={{ fontSize: 24 }} />
         </IconButton>
       </Box>
     </Box>

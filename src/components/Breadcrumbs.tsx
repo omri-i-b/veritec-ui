@@ -1,6 +1,5 @@
 import { Breadcrumbs as MuiBreadcrumbs, Link, Typography } from '@mui/material';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { colors } from '../theme/theme';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface BreadcrumbItem {
   label: string;
@@ -14,8 +13,8 @@ interface BreadcrumbsProps {
 export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
   return (
     <MuiBreadcrumbs
-      separator={<NavigateNextIcon fontSize="small" sx={{ color: colors.grey[400] }} />}
-      sx={{ mb: 1 }}
+      separator={<ChevronRightIcon sx={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.6)' }} />}
+      sx={{ mb: 1.5 }}
     >
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
@@ -25,8 +24,8 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
             <Typography
               key={item.label}
               sx={{
-                fontSize: 13,
-                color: colors.grey[600],
+                fontSize: 16,
+                color: 'rgba(0, 0, 0, 0.87)',
               }}
             >
               {item.label}
@@ -40,10 +39,10 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
             href={item.href || '#'}
             underline="hover"
             sx={{
-              fontSize: 13,
-              color: colors.grey[500],
+              fontSize: 16,
+              color: 'rgba(0, 0, 0, 0.6)',
               '&:hover': {
-                color: colors.blue[500],
+                color: 'rgba(0, 0, 0, 0.87)',
               },
             }}
           >

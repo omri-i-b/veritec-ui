@@ -50,7 +50,7 @@ const mockDocuments: Document[] = [
 interface ManageDocumentsModalProps {
   open: boolean;
   onClose: () => void;
-  onSave?: (selectedDocIds: string[]) => void;
+  onSave?: (hiddenDocIds: string[]) => void;
 }
 
 export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsModalProps) => {
@@ -87,8 +87,9 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
   };
 
   const handleSave = () => {
-    const selectedIds = documents.filter((d) => d.selected).map((d) => d.id);
-    onSave?.(selectedIds);
+    // Send IDs of unchecked (hidden) documents
+    const hiddenIds = documents.filter((d) => !d.selected).map((d) => d.id);
+    onSave?.(hiddenIds);
     onClose();
   };
 
@@ -141,7 +142,7 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               mt: 0.5,
             }}
           >
-            Choose the documents to include in this view
+            Uncheck documents to hide their events from this view
           </Typography>
         </Box>
 
@@ -155,7 +156,7 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               mb: 1,
             }}
           >
-            Select Documents from Case
+            Case Documents
           </Typography>
 
           {/* Search Field */}

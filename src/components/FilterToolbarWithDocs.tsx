@@ -101,11 +101,13 @@ const FilterDropdownButton = ({ label, icon }: { label: string; icon: React.Reac
 interface FilterToolbarWithDocsProps {
   excludedDocsCount: number;
   onManageDocuments: () => void;
+  onClearDocumentFilter?: () => void;
 }
 
 export const FilterToolbarWithDocs = ({
   excludedDocsCount,
   onManageDocuments,
+  onClearDocumentFilter,
 }: FilterToolbarWithDocsProps) => {
   const [viewAnchor, setViewAnchor] = useState<null | HTMLElement>(null);
   const [showRelevant, setShowRelevant] = useState(false);
@@ -195,13 +197,30 @@ export const FilterToolbarWithDocs = ({
               >
                 {excludedDocsCount}
               </Box>
-              <CloseIcon
-                sx={{
-                  fontSize: 18,
-                  color: 'rgba(0, 0, 0, 0.54)',
-                  '&:hover': { color: 'rgba(0, 0, 0, 0.87)' },
+              <Box
+                component="span"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClearDocumentFilter?.();
                 }}
-              />
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                  },
+                }}
+              >
+                <CloseIcon
+                  sx={{
+                    fontSize: 18,
+                    color: 'rgba(0, 0, 0, 0.54)',
+                  }}
+                />
+              </Box>
             </Box>
           )}
         </Button>

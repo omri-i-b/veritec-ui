@@ -113,6 +113,7 @@ export const DocumentFilterPage = () => {
           <FilterToolbarWithDocs
             excludedDocsCount={excludedDocs.length}
             onManageDocuments={() => setModalOpen(true)}
+            onClearDocumentFilter={() => setExcludedDocs([])}
           />
 
           {/* Events Table */}

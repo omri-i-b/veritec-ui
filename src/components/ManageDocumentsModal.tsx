@@ -4,70 +4,57 @@ import {
   Typography,
   IconButton,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Checkbox,
-  Link,
+  TextField,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
 import { colors } from '../theme/theme';
 
 interface Document {
   id: string;
   name: string;
-  date: string;
   selected: boolean;
 }
 
 const mockDocuments: Document[] = [
-  { id: '1', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '2', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '3', name: 'alicet_24.pdf', date: '17/12/2023', selected: true },
-  { id: '4', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '5', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '6', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '7', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '8', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '9', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '10', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '11', name: 'at_23.pdf', date: '17/12/2023', selected: false },
-  { id: '12', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
-  { id: '13', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '1', name: 'ali_tom24.pdf', selected: true },
+  { id: '2', name: 'ali_tt.pdf', selected: true },
+  { id: '3', name: 'alice_tomson.pdf', selected: false },
+  { id: '4', name: 'medical_records_2023.pdf', selected: true },
+  { id: '5', name: 'lab_results_q4.pdf', selected: true },
+  { id: '6', name: 'imaging_report.pdf', selected: false },
+  { id: '7', name: 'patient_history.pdf', selected: true },
+  { id: '8', name: 'consultation_notes.pdf', selected: true },
+  { id: '9', name: 'referral_letter.pdf', selected: true },
+  { id: '10', name: 'discharge_summary.pdf', selected: true },
+  { id: '11', name: 'prescription_records.pdf', selected: true },
+  { id: '12', name: 'insurance_claim.pdf', selected: false },
+  { id: '13', name: 'test_results.pdf', selected: true },
 ];
 
 interface ManageDocumentsModalProps {
   open: boolean;
   onClose: () => void;
-  onSave?: (selectedDocIds: string[]) => void;
+  onSave?: (excludedDocIds: string[]) => void;
 }
 
 export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsModalProps) => {
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const totalPages = Math.ceil(documents.length / rowsPerPage);
-  const paginatedDocuments = documents.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
+  const filteredDocuments = documents.filter((doc) =>
+    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const selectedCount = documents.filter((d) => d.selected).length;
-  const allSelected = selectedCount === documents.length;
-  const someSelected = selectedCount > 0 && selectedCount < documents.length;
 
   const handleToggleSelect = (id: string) => {
     setDocuments((prev) =>
@@ -75,19 +62,11 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
     );
   };
 
-  const handleToggleSelectAll = () => {
-    const newSelected = !allSelected;
-    setDocuments((prev) => prev.map((doc) => ({ ...doc, selected: newSelected })));
-  };
-
   const handleSave = () => {
-    const selectedIds = documents.filter((d) => d.selected).map((d) => d.id);
-    onSave?.(selectedIds);
+    const excludedIds = documents.filter((d) => !d.selected).map((d) => d.id);
+    onSave?.(excludedIds);
     onClose();
   };
-
-  const startIndex = (currentPage - 1) * rowsPerPage + 1;
-  const endIndex = Math.min(currentPage * rowsPerPage, documents.length);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -97,271 +76,123 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 960,
+          width: 480,
           bgcolor: 'white',
-          borderRadius: '4px',
-          boxShadow: '0px 2px 8px -2px rgba(21,21,21,0.08), 0px 20px 24px -4px rgba(21,21,21,0.08)',
+          borderRadius: '8px',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
-        {/* Content Section */}
-        <Box sx={{ p: 4, pb: 3 }}>
-          {/* Header */}
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+        {/* Header */}
+        <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Typography
               sx={{
-                fontSize: 24,
-                fontWeight: 400,
-                lineHeight: 1.334,
-                color: '#171a1c',
+                fontSize: 20,
+                fontWeight: 500,
+                color: 'rgba(0,0,0,0.87)',
               }}
             >
-              Manage Documents
+              Select Documents
             </Typography>
-            <IconButton onClick={onClose} size="small" sx={{ mt: -0.5, mr: -0.5 }}>
-              <CloseIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
+            <IconButton onClick={onClose} size="small" sx={{ mr: -1 }}>
+              <CloseIcon sx={{ fontSize: 20, color: 'rgba(0,0,0,0.54)' }} />
             </IconButton>
           </Box>
 
-          {/* Subtitle */}
-          <Typography
+          {/* Search Field - Always visible */}
+          <TextField
+            fullWidth
+            placeholder="Search documents"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            size="small"
             sx={{
-              fontSize: 16,
-              fontWeight: 400,
-              lineHeight: 1.5,
-              color: '#32383e',
-              letterSpacing: '0.15px',
-              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+                backgroundColor: '#f5f5f5',
+                '& fieldset': {
+                  border: 'none',
+                },
+                '&:hover fieldset': {
+                  border: 'none',
+                },
+                '&.Mui-focused fieldset': {
+                  border: `2px solid ${colors.blue[500]}`,
+                },
+              },
             }}
-          >
-            Select the documents you want to use in chat
-          </Typography>
-
-          {/* Toolbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, height: 36 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <ListAltOutlinedIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
-              <Typography
-                sx={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  lineHeight: 1.5,
-                  color: 'rgba(0,0,0,0.87)',
-                  letterSpacing: '0.15px',
-                }}
-              >
-                All Documents
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Button
-                variant="outlined"
-                startIcon={<FilterAltOutlinedIcon sx={{ fontSize: 24 }} />}
-                sx={{
-                  borderColor: '#bebebe',
-                  color: 'rgba(0,0,0,0.6)',
-                  textTransform: 'none',
-                  height: 36,
-                  fontSize: 14,
-                  fontWeight: 400,
-                  px: 1.5,
-                  '&:hover': {
-                    borderColor: '#9e9e9e',
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                  },
-                }}
-              >
-                Filters
-              </Button>
-              <Box
-                sx={{
-                  width: 36,
-                  height: 36,
-                  border: '1px solid #bebebe',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    borderColor: '#9e9e9e',
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                  },
-                }}
-              >
-                <ManageSearchIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Table */}
-          <TableContainer sx={{ border: 'none' }}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                  <TableCell padding="none" sx={{ width: 48, py: 0.75, px: 2, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                    <Checkbox
-                      checked={allSelected}
-                      indeterminate={someSelected}
-                      onChange={handleToggleSelectAll}
-                      sx={{
-                        p: 0,
-                        color: 'rgba(0,0,0,0.6)',
-                        '&.Mui-checked': { color: colors.blue[500] },
-                        '&.MuiCheckbox-indeterminate': { color: colors.blue[500] },
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 500, fontSize: 14, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                    Document name
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 500, fontSize: 14, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                    Upload date
-                  </TableCell>
-                  <TableCell sx={{ width: 48, py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }} />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedDocuments.map((doc) => (
-                  <TableRow
-                    key={doc.id}
-                    sx={{
-                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
-                      borderBottom: '1px solid rgba(0,0,0,0.12)',
-                    }}
-                  >
-                    <TableCell padding="none" sx={{ width: 48, py: 1, px: 2, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                      <Checkbox
-                        checked={doc.selected}
-                        onChange={() => handleToggleSelect(doc.id)}
-                        sx={{
-                          p: 0,
-                          color: 'rgba(0,0,0,0.6)',
-                          '&.Mui-checked': { color: colors.blue[500] },
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <InsertDriveFileOutlinedIcon
-                          sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }}
-                        />
-                        <Link
-                          href="#"
-                          underline="hover"
-                          sx={{
-                            fontSize: 16,
-                            color: colors.blue[500],
-                            lineHeight: 1.5,
-                            letterSpacing: '0.15px',
-                          }}
-                        >
-                          {doc.name}
-                        </Link>
-                      </Box>
-                    </TableCell>
-                    <TableCell sx={{ py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          color: 'rgba(0,0,0,0.87)',
-                          lineHeight: 1.43,
-                          letterSpacing: '0.17px',
-                        }}
-                      >
-                        {doc.date}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ width: 48, py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-                      <IconButton size="small" sx={{ p: 1 }}>
-                        <VisibilityOutlinedIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination Footer */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              gap: 3,
-              py: 0.5,
-              backgroundColor: '#f5f5f5',
-              mx: -4,
-              px: 4,
-              mt: 0,
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: 'rgba(0,0,0,0.54)' }} />
+                </InputAdornment>
+              ),
             }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  color: 'rgba(0,0,0,0.6)',
-                  lineHeight: 1.66,
-                  letterSpacing: '0.4px',
-                }}
-              >
-                Rows per page:
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <Typography
-                  sx={{
-                    fontSize: 12,
-                    color: 'rgba(0,0,0,0.87)',
-                    lineHeight: 1.66,
-                    letterSpacing: '0.4px',
-                  }}
-                >
-                  {rowsPerPage}
-                </Typography>
-                <KeyboardArrowDownIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
-              </Box>
-            </Box>
-            <Typography
-              sx={{
-                fontSize: 12,
-                color: 'rgba(0,0,0,0.87)',
-                lineHeight: 1.66,
-                letterSpacing: '0.4px',
-              }}
-            >
-              {startIndex}-{endIndex} of {documents.length}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                size="small"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                sx={{ p: 1 }}
-              >
-                <ChevronLeftIcon sx={{ fontSize: 24 }} />
-              </IconButton>
-              <IconButton
-                size="small"
-                disabled={currentPage >= totalPages}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                sx={{ p: 1 }}
-              >
-                <ChevronRightIcon sx={{ fontSize: 24 }} />
-              </IconButton>
-            </Box>
-          </Box>
+          />
         </Box>
 
-        {/* Bottom Buttons */}
+        {/* Document List */}
+        <List
+          sx={{
+            flex: 1,
+            overflow: 'auto',
+            maxHeight: 360,
+            px: 1,
+            py: 0,
+          }}
+        >
+          {filteredDocuments.map((doc) => (
+            <ListItem key={doc.id} disablePadding>
+              <ListItemButton
+                onClick={() => handleToggleSelect(doc.id)}
+                sx={{
+                  py: 1,
+                  px: 2,
+                  borderRadius: 1,
+                  '&:hover': {
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <Checkbox
+                    checked={doc.selected}
+                    edge="start"
+                    disableRipple
+                    sx={{
+                      p: 0,
+                      color: 'rgba(0,0,0,0.38)',
+                      '&.Mui-checked': {
+                        color: colors.blue[500],
+                      },
+                    }}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={doc.name}
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: 14,
+                      color: 'rgba(0,0,0,0.87)',
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+
+        {/* Footer Buttons */}
         <Box
           sx={{
             display: 'flex',
             gap: 2,
-            p: 4,
-            pt: 2,
+            px: 3,
+            py: 2,
+            borderTop: '1px solid rgba(0,0,0,0.08)',
           }}
         >
           <Button
@@ -372,9 +203,10 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               textTransform: 'none',
               borderColor: colors.blue[500],
               color: colors.blue[500],
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: 500,
-              height: 42,
+              height: 40,
+              borderRadius: '8px',
               '&:hover': {
                 borderColor: colors.blue[600],
                 backgroundColor: 'rgba(33, 150, 243, 0.04)',
@@ -390,9 +222,10 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
             sx={{
               textTransform: 'none',
               backgroundColor: colors.blue[500],
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: 500,
-              height: 42,
+              height: 40,
+              borderRadius: '8px',
               boxShadow: 'none',
               '&:hover': {
                 backgroundColor: colors.blue[600],
@@ -400,7 +233,7 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
               },
             }}
           >
-            Save Changes
+            Add ({selectedCount})
           </Button>
         </Box>
       </Box>

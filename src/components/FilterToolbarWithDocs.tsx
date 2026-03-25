@@ -18,6 +18,7 @@ import ListIcon from '@mui/icons-material/List';
 import EventIcon from '@mui/icons-material/Event';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { useState } from 'react';
@@ -142,33 +143,67 @@ export const FilterToolbarWithDocs = ({
           onClick={() => setHideDuplicates(!hideDuplicates)}
         />
 
-        {/* Documents Filter - Shows activated state when docs excluded */}
+        {/* Documents Filter - Shows active state when docs excluded */}
         <Button
-          variant={excludedDocsCount > 0 ? 'contained' : 'outlined'}
+          variant="outlined"
           startIcon={
             <DescriptionOutlinedIcon
-              sx={{ fontSize: 20, color: excludedDocsCount > 0 ? '#fff' : 'rgba(0, 0, 0, 0.6)' }}
+              sx={{ fontSize: 20, color: excludedDocsCount > 0 ? colors.blue[500] : 'rgba(0, 0, 0, 0.6)' }}
             />
           }
           onClick={onManageDocuments}
           sx={{
-            borderColor: 'rgba(0, 0, 0, 0.23)',
-            backgroundColor: excludedDocsCount > 0 ? colors.blue[500] : 'transparent',
-            color: excludedDocsCount > 0 ? '#fff' : 'rgba(0, 0, 0, 0.6)',
+            borderColor: excludedDocsCount > 0 ? colors.blue[500] : 'rgba(0, 0, 0, 0.23)',
+            color: excludedDocsCount > 0 ? colors.blue[500] : 'rgba(0, 0, 0, 0.6)',
             fontSize: 14,
-            fontWeight: excludedDocsCount > 0 ? 500 : 400,
+            fontWeight: 400,
             height: 36,
             textTransform: 'none',
-            px: 1.5,
+            pl: 1.5,
+            pr: excludedDocsCount > 0 ? 1 : 1.5,
             whiteSpace: 'nowrap',
-            boxShadow: excludedDocsCount > 0 ? 'none' : undefined,
+            gap: 0.75,
             '&:hover': {
               borderColor: excludedDocsCount > 0 ? colors.blue[600] : 'rgba(0, 0, 0, 0.4)',
-              backgroundColor: excludedDocsCount > 0 ? colors.blue[600] : 'rgba(0, 0, 0, 0.04)',
+              backgroundColor: excludedDocsCount > 0 ? 'rgba(33, 150, 243, 0.04)' : 'rgba(0, 0, 0, 0.04)',
             },
           }}
         >
-          Documents{excludedDocsCount > 0 ? ` · ${excludedDocsCount}` : ''}
+          Documents
+          {excludedDocsCount > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                ml: 0.5,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  backgroundColor: colors.red[500],
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {excludedDocsCount}
+              </Box>
+              <CloseIcon
+                sx={{
+                  fontSize: 18,
+                  color: 'rgba(0, 0, 0, 0.54)',
+                  '&:hover': { color: 'rgba(0, 0, 0, 0.87)' },
+                }}
+              />
+            </Box>
+          )}
         </Button>
 
         {/* Filter Dropdowns with specific icons */}

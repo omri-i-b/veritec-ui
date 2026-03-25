@@ -11,17 +11,14 @@ import {
   TableHead,
   TableRow,
   Checkbox,
-  TextField,
-  InputAdornment,
   Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import SearchIcon from '@mui/icons-material/Search';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -32,62 +29,65 @@ interface Document {
   id: string;
   name: string;
   date: string;
-  excluded: boolean;
+  selected: boolean;
 }
 
 const mockDocuments: Document[] = [
-  { id: '1', name: 'ali_tom24.pdf', date: '17/12/2023', excluded: false },
-  { id: '2', name: 'ali_tt.pdf', date: '17/12/2023', excluded: false },
-  { id: '3', name: 'alice_tomson.pdf', date: '15/12/2023', excluded: true },
-  { id: '4', name: 'medical_records_2023.pdf', date: '14/12/2023', excluded: false },
-  { id: '5', name: 'lab_results_q4.pdf', date: '12/12/2023', excluded: false },
-  { id: '6', name: 'imaging_report.pdf', date: '10/12/2023', excluded: true },
-  { id: '7', name: 'patient_history.pdf', date: '08/12/2023', excluded: false },
-  { id: '8', name: 'consultation_notes.pdf', date: '05/12/2023', excluded: false },
+  { id: '1', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '2', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
+  { id: '3', name: 'alicet_24.pdf', date: '17/12/2023', selected: true },
+  { id: '4', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '5', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
+  { id: '6', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '7', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
+  { id: '8', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '9', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '10', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
+  { id: '11', name: 'at_23.pdf', date: '17/12/2023', selected: false },
+  { id: '12', name: 'at_2023.pdf', date: '17/12/2023', selected: false },
+  { id: '13', name: 'at_23.pdf', date: '17/12/2023', selected: false },
 ];
 
 interface ManageDocumentsModalProps {
   open: boolean;
   onClose: () => void;
-  onSave?: (excludedDocIds: string[]) => void;
+  onSave?: (selectedDocIds: string[]) => void;
 }
 
 export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsModalProps) => {
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
 
-  const filteredDocuments = documents.filter((doc) =>
-    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredDocuments.length / rowsPerPage);
-  const paginatedDocuments = filteredDocuments.slice(
+  const totalPages = Math.ceil(documents.length / rowsPerPage);
+  const paginatedDocuments = documents.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
 
-  const handleToggleExclude = (id: string) => {
+  const selectedCount = documents.filter((d) => d.selected).length;
+  const allSelected = selectedCount === documents.length;
+  const someSelected = selectedCount > 0 && selectedCount < documents.length;
+
+  const handleToggleSelect = (id: string) => {
     setDocuments((prev) =>
-      prev.map((doc) => (doc.id === id ? { ...doc, excluded: !doc.excluded } : doc))
+      prev.map((doc) => (doc.id === id ? { ...doc, selected: !doc.selected } : doc))
     );
   };
 
   const handleToggleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    setDocuments((prev) => prev.map((doc) => ({ ...doc, excluded: !newSelectAll })));
+    const newSelected = !allSelected;
+    setDocuments((prev) => prev.map((doc) => ({ ...doc, selected: newSelected })));
   };
 
   const handleSave = () => {
-    const excludedIds = documents.filter((d) => d.excluded).map((d) => d.id);
-    onSave?.(excludedIds);
+    const selectedIds = documents.filter((d) => d.selected).map((d) => d.id);
+    onSave?.(selectedIds);
     onClose();
   };
 
-  const excludedCount = documents.filter((d) => d.excluded).length;
+  const startIndex = (currentPage - 1) * rowsPerPage + 1;
+  const endIndex = Math.min(currentPage * rowsPerPage, documents.length);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -97,244 +97,311 @@ export const ManageDocumentsModal = ({ open, onClose, onSave }: ManageDocumentsM
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 700,
-          maxHeight: '80vh',
+          width: 960,
           bgcolor: 'white',
-          borderRadius: 1,
+          borderRadius: '4px',
           boxShadow: '0px 2px 8px -2px rgba(21,21,21,0.08), 0px 20px 24px -4px rgba(21,21,21,0.08)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
-        {/* Header */}
-        <Box sx={{ p: 3, pb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-            <Typography sx={{ fontSize: 24, fontWeight: 400, color: 'rgba(0,0,0,0.87)' }}>
+        {/* Content Section */}
+        <Box sx={{ p: 4, pb: 3 }}>
+          {/* Header */}
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+            <Typography
+              sx={{
+                fontSize: 24,
+                fontWeight: 400,
+                lineHeight: 1.334,
+                color: '#171a1c',
+              }}
+            >
               Manage Documents
             </Typography>
-            <IconButton onClick={onClose} size="small">
-              <CloseIcon />
+            <IconButton onClick={onClose} size="small" sx={{ mt: -0.5, mr: -0.5 }}>
+              <CloseIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
             </IconButton>
           </Box>
-          <Typography sx={{ fontSize: 16, color: 'rgba(0,0,0,0.6)', mb: 2 }}>
-            Select the documents to exclude from this view
+
+          {/* Subtitle */}
+          <Typography
+            sx={{
+              fontSize: 16,
+              fontWeight: 400,
+              lineHeight: 1.5,
+              color: '#32383e',
+              letterSpacing: '0.15px',
+              mb: 2,
+            }}
+          >
+            Select the documents you want to use in chat
           </Typography>
 
           {/* Toolbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, height: 36 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <ListAltIcon sx={{ color: 'rgba(0,0,0,0.54)' }} />
-              <Typography sx={{ fontSize: 16, color: 'rgba(0,0,0,0.87)' }}>
+              <ListAltOutlinedIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  lineHeight: 1.5,
+                  color: 'rgba(0,0,0,0.87)',
+                  letterSpacing: '0.15px',
+                }}
+              >
                 All Documents
               </Typography>
-              {excludedCount > 0 && (
-                <Typography sx={{ fontSize: 14, color: colors.red[500] }}>
-                  ({excludedCount} excluded)
-                </Typography>
-              )}
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Button
                 variant="outlined"
-                startIcon={<FilterAltIcon />}
+                startIcon={<FilterAltOutlinedIcon sx={{ fontSize: 24 }} />}
                 sx={{
                   borderColor: '#bebebe',
                   color: 'rgba(0,0,0,0.6)',
                   textTransform: 'none',
                   height: 36,
+                  fontSize: 14,
+                  fontWeight: 400,
+                  px: 1.5,
+                  '&:hover': {
+                    borderColor: '#9e9e9e',
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                  },
                 }}
               >
                 Filters
               </Button>
-              <TextField
-                placeholder="Search documents..."
-                size="small"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <Box
                 sx={{
-                  width: 200,
-                  '& .MuiOutlinedInput-root': {
-                    height: 36,
+                  width: 36,
+                  height: 36,
+                  border: '1px solid #bebebe',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    borderColor: '#9e9e9e',
+                    backgroundColor: 'rgba(0,0,0,0.04)',
                   },
                 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: 'rgba(0,0,0,0.54)' }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              >
+                <ManageSearchIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
+              </Box>
             </Box>
           </Box>
-        </Box>
 
-        {/* Table */}
-        <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#fafafa' }}>
-                <TableCell padding="checkbox" sx={{ backgroundColor: '#fafafa' }}>
-                  <Checkbox
-                    checked={selectAll}
-                    indeterminate={excludedCount > 0 && excludedCount < documents.length}
-                    onChange={handleToggleSelectAll}
-                    sx={{
-                      color: 'rgba(0,0,0,0.38)',
-                      '&.Mui-checked': { color: colors.blue[500] },
-                    }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 14, backgroundColor: '#fafafa' }}>
-                  Document Name
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 14, backgroundColor: '#fafafa' }}>
-                  Date Added
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: 600, fontSize: 14, width: 80, backgroundColor: '#fafafa' }}
-                >
-                  Status
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedDocuments.map((doc) => (
-                <TableRow
-                  key={doc.id}
-                  hover
-                  sx={{
-                    backgroundColor: doc.excluded ? 'rgba(0,0,0,0.04)' : 'transparent',
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
-                  }}
-                >
-                  <TableCell padding="checkbox">
+          {/* Table */}
+          <TableContainer sx={{ border: 'none' }}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                  <TableCell padding="none" sx={{ width: 48, py: 0.75, px: 2, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
                     <Checkbox
-                      checked={!doc.excluded}
-                      onChange={() => handleToggleExclude(doc.id)}
+                      checked={allSelected}
+                      indeterminate={someSelected}
+                      onChange={handleToggleSelectAll}
                       sx={{
-                        color: 'rgba(0,0,0,0.38)',
+                        p: 0,
+                        color: 'rgba(0,0,0,0.6)',
                         '&.Mui-checked': { color: colors.blue[500] },
+                        '&.MuiCheckbox-indeterminate': { color: colors.blue[500] },
                       }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <InsertDriveFileIcon
+                  <TableCell sx={{ fontWeight: 500, fontSize: 14, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                    Document name
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 500, fontSize: 14, color: 'rgba(0,0,0,0.87)', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                    Upload date
+                  </TableCell>
+                  <TableCell sx={{ width: 48, py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.12)' }} />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedDocuments.map((doc) => (
+                  <TableRow
+                    key={doc.id}
+                    sx={{
+                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
+                      borderBottom: '1px solid rgba(0,0,0,0.12)',
+                    }}
+                  >
+                    <TableCell padding="none" sx={{ width: 48, py: 1, px: 2, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                      <Checkbox
+                        checked={doc.selected}
+                        onChange={() => handleToggleSelect(doc.id)}
                         sx={{
-                          fontSize: 20,
-                          color: doc.excluded ? 'rgba(0,0,0,0.38)' : colors.blue[500],
+                          p: 0,
+                          color: 'rgba(0,0,0,0.6)',
+                          '&.Mui-checked': { color: colors.blue[500] },
                         }}
                       />
-                      <Link
-                        href="#"
-                        underline="hover"
+                    </TableCell>
+                    <TableCell sx={{ py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <InsertDriveFileOutlinedIcon
+                          sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }}
+                        />
+                        <Link
+                          href="#"
+                          underline="hover"
+                          sx={{
+                            fontSize: 16,
+                            color: colors.blue[500],
+                            lineHeight: 1.5,
+                            letterSpacing: '0.15px',
+                          }}
+                        >
+                          {doc.name}
+                        </Link>
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                      <Typography
                         sx={{
                           fontSize: 14,
-                          color: doc.excluded ? 'rgba(0,0,0,0.38)' : colors.blue[500],
-                          textDecoration: doc.excluded ? 'line-through' : 'none',
+                          color: 'rgba(0,0,0,0.87)',
+                          lineHeight: 1.43,
+                          letterSpacing: '0.17px',
                         }}
                       >
-                        {doc.name}
-                      </Link>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      sx={{
-                        fontSize: 14,
-                        color: doc.excluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)',
-                      }}
-                    >
-                      {doc.date}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleToggleExclude(doc.id)}
-                      sx={{
-                        color: doc.excluded ? 'rgba(0,0,0,0.38)' : colors.blue[500],
-                      }}
-                    >
-                      {doc.excluded ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                        {doc.date}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ width: 48, py: 1, borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+                      <IconButton size="small" sx={{ p: 1 }}>
+                        <VisibilityOutlinedIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        {/* Footer */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            px: 2,
-            py: 1,
-            backgroundColor: '#f5f5f5',
-            borderTop: '1px solid rgba(0,0,0,0.12)',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Pagination Footer */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 3,
+              py: 0.5,
+              backgroundColor: '#f5f5f5',
+              mx: -4,
+              px: 4,
+              mt: 0,
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ fontSize: 12, color: 'rgba(0,0,0,0.6)' }}>Rows per page:</Typography>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: 'rgba(0,0,0,0.6)',
+                  lineHeight: 1.66,
+                  letterSpacing: '0.4px',
+                }}
+              >
+                Rows per page:
+              </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <Typography sx={{ fontSize: 12, color: 'rgba(0,0,0,0.87)' }}>{rowsPerPage}</Typography>
-                <KeyboardArrowDownIcon sx={{ fontSize: 20, color: 'rgba(0,0,0,0.54)' }} />
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    color: 'rgba(0,0,0,0.87)',
+                    lineHeight: 1.66,
+                    letterSpacing: '0.4px',
+                  }}
+                >
+                  {rowsPerPage}
+                </Typography>
+                <KeyboardArrowDownIcon sx={{ fontSize: 24, color: 'rgba(0,0,0,0.54)' }} />
               </Box>
             </Box>
-            <Typography sx={{ fontSize: 12, color: 'rgba(0,0,0,0.87)' }}>
-              {(currentPage - 1) * rowsPerPage + 1}-
-              {Math.min(currentPage * rowsPerPage, filteredDocuments.length)} of{' '}
-              {filteredDocuments.length}
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: 'rgba(0,0,0,0.87)',
+                lineHeight: 1.66,
+                letterSpacing: '0.4px',
+              }}
+            >
+              {startIndex}-{endIndex} of {documents.length}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
                 size="small"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
+                sx={{ p: 1 }}
               >
-                <ChevronLeftIcon />
+                <ChevronLeftIcon sx={{ fontSize: 24 }} />
               </IconButton>
               <IconButton
                 size="small"
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => p + 1)}
+                sx={{ p: 1 }}
               >
-                <ChevronRightIcon />
+                <ChevronRightIcon sx={{ fontSize: 24 }} />
               </IconButton>
             </Box>
           </Box>
+        </Box>
 
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              onClick={onClose}
-              sx={{
-                textTransform: 'none',
-                borderColor: 'rgba(0,0,0,0.23)',
-                color: 'rgba(0,0,0,0.87)',
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleSave}
-              sx={{
-                textTransform: 'none',
-                backgroundColor: colors.blue[500],
-                '&:hover': { backgroundColor: colors.blue[600] },
-              }}
-            >
-              Apply Changes
-            </Button>
-          </Box>
+        {/* Bottom Buttons */}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            p: 4,
+            pt: 2,
+          }}
+        >
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={onClose}
+            sx={{
+              textTransform: 'none',
+              borderColor: colors.blue[500],
+              color: colors.blue[500],
+              fontSize: 15,
+              fontWeight: 500,
+              height: 42,
+              '&:hover': {
+                borderColor: colors.blue[600],
+                backgroundColor: 'rgba(33, 150, 243, 0.04)',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleSave}
+            sx={{
+              textTransform: 'none',
+              backgroundColor: colors.blue[500],
+              fontSize: 15,
+              fontWeight: 500,
+              height: 42,
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: colors.blue[600],
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Save Changes
+          </Button>
         </Box>
       </Box>
     </Modal>

@@ -1,38 +1,75 @@
-import { Box, IconButton, Avatar, Tooltip } from '@mui/material';
-import LayersRoundedIcon from '@mui/icons-material/LayersRounded';
-import ViewTimelineRoundedIcon from '@mui/icons-material/ViewTimelineRounded';
-import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
-import ReportProblemRoundedIcon from '@mui/icons-material/ReportProblemRounded';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import { Box, IconButton, Avatar, Tooltip, SvgIcon } from '@mui/material';
 import { colors } from '../theme/theme';
 
-// Veritec Logo SVG
+// Veritec "V" Logo from Figma
 const VeritecLogo = () => (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 4L28 28H4L16 4Z" stroke={colors.blue[500]} strokeWidth="2" fill="none" />
-    <path d="M16 10L22 22H10L16 10Z" fill={colors.blue[500]} />
-  </svg>
+  <SvgIcon sx={{ width: 40, height: 40 }} viewBox="0 0 40 40">
+    <rect width="40" height="40" rx="8" fill={colors.blue[500]} />
+    <path
+      d="M12 12L20 28L28 12"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </SvgIcon>
+);
+
+// Layers/Stack icon (disabled state)
+const LayersIcon = () => (
+  <SvgIcon sx={{ fontSize: 24 }} viewBox="0 0 24 24">
+    <path
+      d="M11.99 18.54L4.62 12.81L3 14.07L12 21.07L21 14.07L19.37 12.8L11.99 18.54ZM12 16L19.36 10.27L21 9L12 2L3 9L4.63 10.27L12 16ZM12 4.53L17.74 9L12 13.47L6.26 9L12 4.53Z"
+      fill="currentColor"
+    />
+  </SvgIcon>
+);
+
+// Document/File icon (active state)
+const DocumentIcon = () => (
+  <SvgIcon sx={{ fontSize: 24 }} viewBox="0 0 24 24">
+    <path
+      d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z"
+      fill="currentColor"
+    />
+  </SvgIcon>
+);
+
+// Help/Support icon for bottom
+const HelpIcon = () => (
+  <SvgIcon sx={{ fontSize: 20 }} viewBox="0 0 24 24">
+    <path
+      d="M11 18H13V16H11V18ZM12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12 6C9.79 6 8 7.79 8 10H10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 12 11 11.75 11 15H13C13 12.75 16 12.5 16 10C16 7.79 14.21 6 12 6Z"
+      fill="currentColor"
+    />
+  </SvgIcon>
 );
 
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
-const NavItem = ({ icon, label, active = false, onClick }: NavItemProps) => (
+const NavItem = ({ icon, label, active = false, disabled = false, onClick }: NavItemProps) => (
   <Tooltip title={label} placement="right">
     <IconButton
       onClick={onClick}
+      disabled={disabled}
       sx={{
-        width: 40,
-        height: 40,
-        borderRadius: 2,
-        color: active ? colors.blue[500] : colors.grey[500],
-        backgroundColor: active ? colors.blue[50] : 'transparent',
+        width: 34,
+        height: 34,
+        borderRadius: 1,
+        color: disabled ? 'rgba(0, 0, 0, 0.38)' : active ? colors.blue[500] : 'rgba(0, 0, 0, 0.54)',
+        backgroundColor: active ? '#E9F5FE' : 'transparent',
         '&:hover': {
-          backgroundColor: active ? colors.blue[50] : colors.grey[100],
+          backgroundColor: active ? '#E9F5FE' : 'rgba(0, 0, 0, 0.04)',
+        },
+        '&.Mui-disabled': {
+          color: 'rgba(0, 0, 0, 0.38)',
         },
       }}
     >
@@ -47,8 +84,7 @@ export const Sidebar = () => {
       sx={{
         width: 56,
         height: '100vh',
-        backgroundColor: '#FFFFFF',
-        borderRight: `1px solid ${colors.grey[200]}`,
+        backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -60,35 +96,47 @@ export const Sidebar = () => {
       }}
     >
       {/* Logo */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 2 }}>
         <VeritecLogo />
       </Box>
 
       {/* Main Navigation */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
-        <NavItem icon={<LayersRoundedIcon />} label="Cases" active />
-        <NavItem icon={<ViewTimelineRoundedIcon />} label="Timeline" />
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, flex: 1 }}>
+        <NavItem icon={<LayersIcon />} label="Cases" disabled />
+        <NavItem icon={<DocumentIcon />} label="Events" active />
       </Box>
 
       {/* Bottom Navigation */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 'auto' }}>
-        <NavItem icon={<PeopleRoundedIcon />} label="Team" />
-        <NavItem icon={<ReportProblemRoundedIcon />} label="Alerts" />
-        <NavItem icon={<SettingsRoundedIcon />} label="Settings" />
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, mt: 'auto' }}>
+        {/* Help Button */}
+        <IconButton
+          sx={{
+            width: 34,
+            height: 34,
+            borderRadius: 1,
+            backgroundColor: colors.blue[500],
+            color: '#FFFFFF',
+            '&:hover': {
+              backgroundColor: colors.blue[600],
+            },
+          }}
+        >
+          <HelpIcon />
+        </IconButton>
 
         {/* User Avatar */}
         <Avatar
           sx={{
-            width: 32,
-            height: 32,
-            mt: 1,
+            width: 34,
+            height: 34,
             fontSize: 12,
             fontWeight: 600,
-            backgroundColor: colors.blue[500],
+            backgroundColor: '#BDBDBD',
+            color: '#FFFFFF',
             cursor: 'pointer',
           }}
         >
-          OP
+          OB
         </Avatar>
       </Box>
     </Box>

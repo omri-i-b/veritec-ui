@@ -1,61 +1,25 @@
-import { Box, Button, Switch, FormControlLabel, Menu, MenuItem, IconButton, Chip, TextField, InputAdornment } from '@mui/material';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ViewColumnRoundedIcon from '@mui/icons-material/ViewColumnRounded';
+import { Box, Button, Switch, FormControlLabel, Menu, MenuItem, Chip, TextField, InputAdornment, Typography } from '@mui/material';
 import TableRowsRoundedIcon from '@mui/icons-material/TableRowsRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import { colors } from '../theme/theme';
 
-const FilterChip = ({
-  label,
-  onDelete
-}: {
-  label: string;
-  onDelete?: () => void;
-}) => (
-  <Chip
-    label={label}
-    size="small"
-    onDelete={onDelete}
-    deleteIcon={onDelete ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
-    sx={{
-      height: 28,
-      fontSize: 12,
-      fontWeight: 500,
-      backgroundColor: colors.grey[100],
-      color: colors.grey[700],
-      borderRadius: '6px',
-      '& .MuiChip-deleteIcon': {
-        color: colors.grey[500],
-        '&:hover': {
-          color: colors.grey[700],
-        },
-      },
-    }}
-  />
-);
-
-const FilterDropdown = ({
-  label,
-  value
-}: {
-  label: string;
-  value?: string;
-}) => (
+const FilterButton = ({ label, hasIcon = true }: { label: string; hasIcon?: boolean }) => (
   <Button
     variant="outlined"
     size="small"
-    endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+    startIcon={hasIcon ? <AddIcon sx={{ fontSize: 16 }} /> : undefined}
     sx={{
       borderColor: colors.grey[300],
       color: colors.grey[700],
       fontSize: 12,
       fontWeight: 500,
-      height: 28,
-      minWidth: 'auto',
+      height: 32,
+      textTransform: 'none',
       '&:hover': {
         borderColor: colors.grey[400],
         backgroundColor: colors.grey[50],
@@ -63,184 +27,60 @@ const FilterDropdown = ({
     }}
   >
     {label}
-    {value && (
-      <Chip
-        label={value}
-        size="small"
-        sx={{
-          ml: 0.5,
-          height: 18,
-          fontSize: 10,
-          backgroundColor: colors.blue[500],
-          color: '#FFFFFF',
-        }}
-      />
-    )}
   </Button>
 );
 
 export const FilterToolbar = () => {
   const [viewAnchor, setViewAnchor] = useState<null | HTMLElement>(null);
   const [showRelevant, setShowRelevant] = useState(false);
-  const [hideDuplicates, setHideDuplicates] = useState(true);
+  const [hideDuplicates, setHideDuplicates] = useState(false);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      {/* Main Toolbar Row */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          py: 1.5,
-          borderBottom: `1px solid ${colors.grey[200]}`,
-        }}
-      >
-        {/* Left side: Title */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <TableRowsRoundedIcon sx={{ color: colors.grey[500], fontSize: 20 }} />
-          <span style={{ fontSize: 14, fontWeight: 500, color: colors.grey[900] }}>
-            Event overview
-          </span>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        py: 1.5,
+        borderBottom: `1px solid ${colors.grey[200]}`,
+        gap: 2,
+      }}
+    >
+      {/* Left side: Title and filters */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+        {/* Event Overview label */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <TableRowsRoundedIcon sx={{ color: colors.grey[500], fontSize: 18 }} />
+          <Typography sx={{ fontSize: 13, fontWeight: 500, color: colors.grey[900] }}>
+            Event Overview
+          </Typography>
         </Box>
 
-        {/* Right side: Filters and Actions */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          {/* Filters Button */}
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<FilterAltIcon sx={{ fontSize: 18 }} />}
-            sx={{
-              borderColor: colors.grey[300],
-              color: colors.grey[700],
-              fontSize: 13,
-              fontWeight: 500,
-              '&:hover': {
-                borderColor: colors.grey[400],
-                backgroundColor: colors.grey[50],
-              },
-            }}
-          >
-            Filters
-          </Button>
-
-          {/* Show Only Relevant Toggle */}
-          <FormControlLabel
-            control={
-              <Switch
-                size="small"
-                checked={showRelevant}
-                onChange={(e) => setShowRelevant(e.target.checked)}
-                sx={{
-                  '& .MuiSwitch-switchBase.Mui-checked': {
-                    color: colors.blue[500],
-                  },
-                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                    backgroundColor: colors.blue[500],
-                  },
-                }}
-              />
-            }
-            label={
-              <span style={{ fontSize: 13, color: colors.grey[700] }}>
-                Show only relevant events
-              </span>
-            }
-            sx={{ ml: 0, mr: 0 }}
-          />
-
-          {/* View Dropdown */}
-          <Button
-            variant="outlined"
-            size="small"
-            endIcon={<KeyboardArrowDownIcon />}
-            onClick={(e) => setViewAnchor(e.currentTarget)}
-            sx={{
-              borderColor: colors.grey[300],
-              color: colors.grey[700],
-              fontSize: 13,
-              fontWeight: 500,
-              '&:hover': {
-                borderColor: colors.grey[400],
-                backgroundColor: colors.grey[50],
-              },
-            }}
-          >
-            View:
-            <Chip
-              label="Default"
+        {/* Show Only Relevant Toggle */}
+        <FormControlLabel
+          control={
+            <Switch
               size="small"
+              checked={showRelevant}
+              onChange={(e) => setShowRelevant(e.target.checked)}
               sx={{
-                ml: 0.5,
-                height: 20,
-                fontSize: 11,
-                backgroundColor: colors.blue[500],
-                color: '#FFFFFF',
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: colors.blue[500],
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: colors.blue[500],
+                },
               }}
             />
-          </Button>
-          <Menu
-            anchorEl={viewAnchor}
-            open={Boolean(viewAnchor)}
-            onClose={() => setViewAnchor(null)}
-          >
-            <MenuItem onClick={() => setViewAnchor(null)}>Default</MenuItem>
-            <MenuItem onClick={() => setViewAnchor(null)}>Compact</MenuItem>
-            <MenuItem onClick={() => setViewAnchor(null)}>Expanded</MenuItem>
-          </Menu>
+          }
+          label={
+            <Typography sx={{ fontSize: 12, color: colors.grey[700] }}>
+              Show only relevant events
+            </Typography>
+          }
+          sx={{ ml: 1, mr: 0 }}
+        />
 
-          {/* View Toggle Icons */}
-          <IconButton
-            size="small"
-            sx={{
-              color: colors.grey[500],
-              '&:hover': { backgroundColor: colors.grey[100] },
-            }}
-          >
-            <TableRowsRoundedIcon fontSize="small" />
-          </IconButton>
-
-          <IconButton
-            size="small"
-            sx={{
-              color: colors.grey[500],
-              '&:hover': { backgroundColor: colors.grey[100] },
-            }}
-          >
-            <ViewColumnRoundedIcon fontSize="small" />
-          </IconButton>
-
-          {/* Export Button */}
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
-            endIcon={<KeyboardArrowDownIcon />}
-            sx={{
-              backgroundColor: colors.blue[500],
-              fontSize: 13,
-              fontWeight: 500,
-              '&:hover': {
-                backgroundColor: colors.blue[600],
-              },
-            }}
-          >
-            Export
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Filter Chips Row */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          flexWrap: 'wrap',
-          pb: 1,
-        }}
-      >
         {/* Hide Duplicates Toggle */}
         <FormControlLabel
           control={
@@ -259,70 +99,160 @@ export const FilterToolbar = () => {
             />
           }
           label={
-            <span style={{ fontSize: 12, color: colors.grey[700] }}>
+            <Typography sx={{ fontSize: 12, color: colors.grey[700] }}>
               Hide duplicates
-            </span>
+            </Typography>
           }
-          sx={{ ml: 0, mr: 1 }}
+          sx={{ ml: 0, mr: 0 }}
         />
 
-        {/* Date Range Pickers */}
+        {/* Filter Buttons */}
+        <FilterButton label="Facility Providers" />
+        <FilterButton label="Medical Providers" />
+        <FilterButton label="Parties" />
+        <FilterButton label="Event Types" />
+      </Box>
+
+      {/* Right side: Date pickers, search, view, export */}
+      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1.5 }}>
+        {/* Start Date */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <Typography sx={{ fontSize: 11, color: colors.grey[500] }}>Start</Typography>
+          <TextField
+            placeholder="MM/DD/YYYY"
+            size="small"
+            sx={{
+              width: 110,
+              '& .MuiOutlinedInput-root': {
+                height: 32,
+                fontSize: 12,
+                '& fieldset': {
+                  borderColor: colors.grey[300],
+                },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+
+        <Typography sx={{ fontSize: 12, color: colors.grey[400], mb: 0.8 }}>-</Typography>
+
+        {/* End Date */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <Typography sx={{ fontSize: 11, color: colors.grey[500] }}>End</Typography>
+          <TextField
+            placeholder="MM/DD/YYYY"
+            size="small"
+            sx={{
+              width: 110,
+              '& .MuiOutlinedInput-root': {
+                height: 32,
+                fontSize: 12,
+                '& fieldset': {
+                  borderColor: colors.grey[300],
+                },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+
+        {/* Search */}
         <TextField
-          placeholder="Start date"
+          placeholder="Search"
           size="small"
           sx={{
-            width: 130,
+            width: 120,
             '& .MuiOutlinedInput-root': {
-              height: 28,
+              height: 32,
               fontSize: 12,
-              backgroundColor: colors.grey[50],
               '& fieldset': {
-                borderColor: colors.grey[200],
+                borderColor: colors.grey[300],
               },
             },
           }}
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ fontSize: 16, color: colors.grey[400] }} />
               </InputAdornment>
             ),
           }}
         />
-        <TextField
-          placeholder="End date"
+
+        {/* View Dropdown */}
+        <Button
+          variant="outlined"
           size="small"
+          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          onClick={(e) => setViewAnchor(e.currentTarget)}
           sx={{
-            width: 130,
-            '& .MuiOutlinedInput-root': {
-              height: 28,
-              fontSize: 12,
+            borderColor: colors.grey[300],
+            color: colors.grey[700],
+            fontSize: 12,
+            fontWeight: 500,
+            height: 32,
+            textTransform: 'none',
+            '&:hover': {
+              borderColor: colors.grey[400],
               backgroundColor: colors.grey[50],
-              '& fieldset': {
-                borderColor: colors.grey[200],
-              },
             },
           }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <CalendarTodayIcon sx={{ fontSize: 14, color: colors.grey[400] }} />
-              </InputAdornment>
-            ),
+        >
+          View:
+          <Chip
+            label="Default"
+            size="small"
+            sx={{
+              ml: 0.5,
+              height: 20,
+              fontSize: 11,
+              backgroundColor: colors.blue[500],
+              color: '#FFFFFF',
+            }}
+          />
+        </Button>
+        <Menu
+          anchorEl={viewAnchor}
+          open={Boolean(viewAnchor)}
+          onClose={() => setViewAnchor(null)}
+        >
+          <MenuItem onClick={() => setViewAnchor(null)}>Default</MenuItem>
+          <MenuItem onClick={() => setViewAnchor(null)}>Compact</MenuItem>
+          <MenuItem onClick={() => setViewAnchor(null)}>Expanded</MenuItem>
+        </Menu>
+
+        {/* Export Button */}
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 16 }} />}
+          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            backgroundColor: colors.blue[500],
+            fontSize: 12,
+            fontWeight: 500,
+            height: 32,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: colors.blue[600],
+            },
           }}
-        />
-
-        {/* Divider */}
-        <Box sx={{ width: 1, height: 20, backgroundColor: colors.grey[200], mx: 0.5 }} />
-
-        {/* Filter Dropdowns */}
-        <FilterDropdown label="Facility Providers" />
-        <FilterDropdown label="Medical Providers" />
-        <FilterDropdown label="Parties" />
-        <FilterDropdown label="Event Types" />
-
-        {/* Active Filter Chips (example) */}
-        <FilterChip label="All Facilities" onDelete={() => {}} />
+        >
+          Export
+        </Button>
       </Box>
     </Box>
   );

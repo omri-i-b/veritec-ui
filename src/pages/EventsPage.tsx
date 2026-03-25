@@ -1,9 +1,7 @@
-import { Box, Tabs, Tab, Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Box, Tabs, Tab } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
-import { Breadcrumbs } from '../components/Breadcrumbs';
 import { CaseHeader } from '../components/CaseHeader';
 import { FilterToolbar } from '../components/FilterToolbar';
 import { EventsTable } from '../components/EventsTable';
@@ -14,24 +12,18 @@ import { colors } from '../theme/theme';
 const mainTabs = [
   { label: 'Overview', completed: true },
   { label: 'Events', completed: true },
-  { label: 'Documents', completed: true },
+  { label: 'Documents', completed: false },
+  { label: 'Billing', completed: false },
+  { label: 'DocIntel', completed: false },
   { label: 'Drafting', completed: false },
   { label: 'Report', completed: false },
   { label: 'Indexing', completed: false },
-  { label: 'Billing', completed: false },
   { label: 'Case Settings', completed: false },
-];
-
-// Sub-tabs for Events
-const eventSubTabs = [
-  { label: 'All (117)', value: 'all' },
-  { label: 'Visits', value: 'visits' },
-  { label: 'Data gaps', value: 'gaps' },
+  { label: 'Deposition', completed: false },
 ];
 
 export const EventsPage = () => {
   const [mainTab, setMainTab] = useState(1); // Events tab active
-  const [eventTab, setEventTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const totalPages = 12; // Mock total pages
@@ -51,30 +43,24 @@ export const EventsPage = () => {
         }}
       >
         {/* Content Area */}
-        <Box sx={{ p: 3 }}>
-          {/* Breadcrumbs */}
-          <Breadcrumbs
-            items={[
-              { label: 'MedChron', href: '#' },
-              { label: 'All Cases', href: '#' },
-              { label: '2021-DCL-01187' },
-            ]}
-          />
-
+        <Box sx={{ px: 3, py: 2 }}>
           {/* Case Header */}
-          <CaseHeader caseId="2021-DCL-01187" status="Processed" />
+          <CaseHeader caseId="TEST CASE-20260325102623-RUN1" />
 
           {/* Main Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: colors.grey[200], mb: 2 }}>
+          <Box sx={{ borderBottom: 1, borderColor: colors.grey[200], mb: 1 }}>
             <Tabs
               value={mainTab}
               onChange={(_, newValue) => setMainTab(newValue)}
               sx={{
+                minHeight: 40,
                 '& .MuiTab-root': {
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: 500,
                   color: colors.grey[600],
-                  minHeight: 48,
+                  minHeight: 40,
+                  padding: '8px 16px',
+                  textTransform: 'none',
                   '&.Mui-selected': {
                     color: colors.blue[500],
                   },
@@ -84,20 +70,20 @@ export const EventsPage = () => {
                 },
               }}
             >
-              {mainTabs.map((tab, index) => (
+              {mainTabs.map((tab) => (
                 <Tab
                   key={tab.label}
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      {tab.label}
                       {tab.completed && (
                         <CheckCircleIcon
                           sx={{
-                            fontSize: 16,
-                            color: index === mainTab ? colors.blue[500] : colors.green[500],
+                            fontSize: 14,
+                            color: colors.green[500],
                           }}
                         />
                       )}
-                      {tab.label}
                     </Box>
                   }
                 />
@@ -108,63 +94,12 @@ export const EventsPage = () => {
           {/* Filter Toolbar */}
           <FilterToolbar />
 
-          {/* Event Sub-tabs */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 2,
-              mt: 2,
-              mb: 2,
-            }}
-          >
-            <Tabs
-              value={eventTab}
-              onChange={(_, newValue) => setEventTab(newValue)}
-              sx={{
-                minHeight: 36,
-                '& .MuiTab-root': {
-                  minHeight: 36,
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: colors.grey[600],
-                  padding: '8px 12px',
-                  '&.Mui-selected': {
-                    color: colors.blue[500],
-                  },
-                },
-                '& .MuiTabs-indicator': {
-                  backgroundColor: colors.blue[500],
-                },
-              }}
-            >
-              {eventSubTabs.map((tab) => (
-                <Tab key={tab.value} label={tab.label} value={tab.value} />
-              ))}
-            </Tabs>
-
-            <Button
-              variant="text"
-              size="small"
-              startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-              sx={{
-                color: colors.blue[500],
-                fontSize: 13,
-                fontWeight: 500,
-                '&:hover': {
-                  backgroundColor: colors.blue[50],
-                },
-              }}
-            >
-              Create new
-            </Button>
-          </Box>
-
           {/* Events Table */}
           <Box
             sx={{
+              mt: 1.5,
               border: `1px solid ${colors.grey[200]}`,
-              borderRadius: 2,
+              borderRadius: 1,
               overflow: 'hidden',
             }}
           >

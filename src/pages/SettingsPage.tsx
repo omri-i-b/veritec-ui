@@ -2,7 +2,6 @@ import { Box, Tabs, Tab, Typography, Button, List, ListItemButton, ListItemIcon,
 import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Breadcrumbs } from '../components/Breadcrumbs';
-import { colors } from '../theme/theme';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupIcon from '@mui/icons-material/Group';
 import FolderIcon from '@mui/icons-material/Folder';

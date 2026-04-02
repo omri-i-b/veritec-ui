@@ -14,7 +14,9 @@ function App() {
           <Route path="/" element={<Navigate to="/events" replace />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/document-filter" element={<DocumentFilterPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings" element={<Navigate to="/settings/fileflow" replace />} />
+          <Route path="/settings/:section" element={<SettingsPage />} />
+          <Route path="/settings/:section/:tab" element={<SettingsPage />} />
         </Routes>
       </HashRouter>
     </ThemeProvider>

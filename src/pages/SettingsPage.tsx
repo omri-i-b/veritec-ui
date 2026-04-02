@@ -1,5 +1,5 @@
 import { Box, Tabs, Tab, Typography, Button, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -39,10 +39,48 @@ const checklistItems = [
   { label: 'Structure & Rules', icon: AccountTreeIcon, completed: false },
 ];
 
+// Map URL section to nav label
+const sectionToNav: Record<string, string> = {
+  fileflow: 'FileFlow',
+  lithub: 'LitHub',
+  general: 'General',
+  'team-members': 'Team Members',
+  sharing: 'Sharing',
+  'api-keys': 'API Keys',
+};
+
+// Map URL tab to tab index
+const fileFlowTabToIndex: Record<string, number> = {
+  settings: 0,
+  sources: 1,
+  destinations: 2,
+  'structure-rules': 3,
+  calendars: 4,
+  usage: 5,
+};
+
+const litHubTabToIndex: Record<string, number> = {
+  billing: 0,
+  'medical-events': 1,
+  docintel: 2,
+  drafting: 3,
+  reports: 4,
+  statuses: 5,
+  tags: 6,
+  keywords: 7,
+  'prompt-library': 8,
+  usage: 9,
+};
+
 export const SettingsPage = () => {
-  const [activeNav, setActiveNav] = useState('FileFlow');
-  const [activeTab, setActiveTab] = useState(1); // Sources tab active (FileFlow)
-  const [litHubTab, setLitHubTab] = useState(0); // Billing tab active (LitHub)
+  const { section = 'fileflow', tab } = useParams();
+  const navigate = useNavigate();
+
+  const activeNav = sectionToNav[section] || 'FileFlow';
+
+  // Determine active tab based on URL
+  const getFileFlowTab = () => tab ? (fileFlowTabToIndex[tab] ?? 1) : 1;
+  const getLitHubTab = () => tab ? (litHubTabToIndex[tab] ?? 0) : 0;
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FFFEFC' }}>
@@ -91,11 +129,12 @@ export const SettingsPage = () => {
                 {settingsNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeNav === item.label;
+                  const sectionSlug = Object.entries(sectionToNav).find(([, v]) => v === item.label)?.[0] || 'fileflow';
                   return (
                     <ListItemButton
                       key={item.label}
                       selected={isActive}
-                      onClick={() => setActiveNav(item.label)}
+                      onClick={() => navigate(`/settings/${sectionSlug}`)}
                       sx={{
                         borderRadius: 2,
                         mb: 1,
@@ -156,8 +195,11 @@ export const SettingsPage = () => {
 
                       {/* Tabs */}
                       <Tabs
-                        value={activeTab}
-                        onChange={(_, newValue) => setActiveTab(newValue)}
+                        value={getFileFlowTab()}
+                        onChange={(_, newValue) => {
+                          const tabSlug = Object.entries(fileFlowTabToIndex).find(([, v]) => v === newValue)?.[0] || 'sources';
+                          navigate(`/settings/fileflow/${tabSlug}`);
+                        }}
                         sx={{
                           minHeight: 42,
                           '& .MuiTab-root': {
@@ -188,7 +230,7 @@ export const SettingsPage = () => {
                     {/* Tab Content */}
                     <Box sx={{ px: 3, py: 3 }}>
                       {/* Sources Tab Content */}
-                      {activeTab === 1 && (
+                      {getFileFlowTab() === 1 && (
                         <Box>
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                             <Typography sx={{ fontSize: 20, fontWeight: 400, color: '#000' }}>
@@ -251,7 +293,7 @@ export const SettingsPage = () => {
                       )}
 
                       {/* Settings Tab Content */}
-                      {activeTab === 0 && (
+                      {getFileFlowTab() === 0 && (
                         <Box>
                           <Typography sx={{ fontSize: 20, fontWeight: 400, color: '#000', mb: 3 }}>
                             General Settings
@@ -263,7 +305,7 @@ export const SettingsPage = () => {
                       )}
 
                       {/* Destinations Tab Content */}
-                      {activeTab === 2 && (
+                      {getFileFlowTab() === 2 && (
                         <Box>
                           <Typography sx={{ fontSize: 20, fontWeight: 400, color: '#000', mb: 3 }}>
                             Configure destinations
@@ -306,7 +348,7 @@ export const SettingsPage = () => {
                       )}
 
                       {/* Structure & Rules Tab Content */}
-                      {activeTab === 3 && (
+                      {getFileFlowTab() === 3 && (
                         <Box>
                           <Typography sx={{ fontSize: 20, fontWeight: 400, color: '#000', mb: 3 }}>
                             Structure & Rules
@@ -318,7 +360,7 @@ export const SettingsPage = () => {
                       )}
 
                       {/* Calendars Tab Content */}
-                      {activeTab === 4 && (
+                      {getFileFlowTab() === 4 && (
                         <Box>
                           <Typography sx={{ fontSize: 20, fontWeight: 400, color: '#000', mb: 3 }}>
                             Calendars
@@ -330,7 +372,7 @@ export const SettingsPage = () => {
                       )}
 
                       {/* Usage Tab Content */}
-                      {activeTab === 5 && (
+                      {getFileFlowTab() === 5 && (
                         <Box>
                           <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                             Usage
@@ -448,8 +490,11 @@ export const SettingsPage = () => {
                   <Box sx={{ px: 3, pt: 2 }}>
                     {/* Tabs */}
                     <Tabs
-                      value={litHubTab}
-                      onChange={(_, newValue) => setLitHubTab(newValue)}
+                      value={getLitHubTab()}
+                      onChange={(_, newValue) => {
+                        const tabSlug = Object.entries(litHubTabToIndex).find(([, v]) => v === newValue)?.[0] || 'billing';
+                        navigate(`/settings/lithub/${tabSlug}`);
+                      }}
                       variant="scrollable"
                       scrollButtons="auto"
                       sx={{
@@ -482,7 +527,7 @@ export const SettingsPage = () => {
                   {/* Tab Content */}
                   <Box sx={{ px: 3, py: 3 }}>
                     {/* Billing Tab Content */}
-                    {litHubTab === 0 && (
+                    {getLitHubTab() === 0 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Billing
@@ -494,7 +539,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Medical Events Tab Content */}
-                    {litHubTab === 1 && (
+                    {getLitHubTab() === 1 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Medical Events
@@ -506,7 +551,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* DocIntel Tab Content */}
-                    {litHubTab === 2 && (
+                    {getLitHubTab() === 2 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           DocIntel
@@ -518,7 +563,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Drafting Tab Content */}
-                    {litHubTab === 3 && (
+                    {getLitHubTab() === 3 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Drafting
@@ -530,7 +575,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Reports Tab Content */}
-                    {litHubTab === 4 && (
+                    {getLitHubTab() === 4 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Reports
@@ -542,7 +587,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Statuses Tab Content */}
-                    {litHubTab === 5 && (
+                    {getLitHubTab() === 5 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Statuses
@@ -554,7 +599,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Tags Tab Content */}
-                    {litHubTab === 6 && (
+                    {getLitHubTab() === 6 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Tags
@@ -566,7 +611,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Keywords Tab Content */}
-                    {litHubTab === 7 && (
+                    {getLitHubTab() === 7 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Keywords
@@ -578,7 +623,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Prompt Library Tab Content */}
-                    {litHubTab === 8 && (
+                    {getLitHubTab() === 8 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Prompt Library
@@ -590,7 +635,7 @@ export const SettingsPage = () => {
                     )}
 
                     {/* Usage Tab Content */}
-                    {litHubTab === 9 && (
+                    {getLitHubTab() === 9 && (
                       <Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 500, color: '#000', mb: 1 }}>
                           Usage
